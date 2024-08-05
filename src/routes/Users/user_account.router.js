@@ -14,7 +14,7 @@ import Authentication from '../../middlewares/authentication/authentication_toke
 const UserAccountRouter = (router = Router()) => {
     router.post('/signup', createUsers); // Đăng ký
     router.post('/social-network/signup', createUsersBySocialAccount); // Đăng ký bằng tài khoản mạng xã hội
-    router.post('/login', loginUser); // Đăng nhập
+    router.post('/login', Authentication, loginUser); // Đăng nhập
     router.get('/is-existed/:id', getUserById); // Kiểm tra sự tồn tại của tài khoản bằng id 
     router.put('/reset-password', updateUserPassword); // Đổi password
     //Authentication

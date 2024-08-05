@@ -2,7 +2,6 @@ import { Token } from "../../models/Token/token.model";
 import { Users } from "../../models/Users/user_account.model";
 
 export default async function Authentication(req, res, next) {
-    console.log(123);
     try {
         // Kiểm tra access_token 
         const access_token = req.headers?.authorization?.split(' ')[1];

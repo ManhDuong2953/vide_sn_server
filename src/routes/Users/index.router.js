@@ -8,7 +8,7 @@ import { getInfoProfileUser } from '../../controllers/Users/index.controller';
 const UserRouter = (router = Router()) => {
     router.use("/account", UserAccountRouter(express.Router()));
     router.get('/info-profile/:id', Authentication, Authorization, getInfoProfileUser);
-    router.get('/owner-profile', Authentication, Authorization, getInfoProfileUser);
+    router.get('/info-profile/', Authentication, Authorization, getInfoProfileUser);
     return router;
 };
 
