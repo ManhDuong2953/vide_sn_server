@@ -3,6 +3,7 @@ import RouterAPI from './src/routes';
 const logger = require('morgan');
 const app = express();
 require('dotenv').config();
+var cookieParser = require('cookie-parser');
 
 const cors = require('cors');
 app.use(cors({
@@ -10,10 +11,11 @@ app.use(cors({
 	credentials: true,
 }));
 app.use(logger('dev'));
-
+  
 // xử lý file, json, url, cookies
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 const port = process.env.PORT || 8080;
 app.listen(port, function () {

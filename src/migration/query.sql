@@ -7,9 +7,10 @@ CREATE TABLE
         user_id VARCHAR(255) PRIMARY KEY,
         user_name VARCHAR(255) NOT NULL,
         user_nickname VARCHAR(255) NOT NULL UNIQUE,
-        user_email VARCHAR(255) NOT NULL UNIQUE,
+        user_email VARCHAR(255) NOT NULL,
         user_password VARCHAR(255) NOT NULL,
         user_status INT DEFAULT 1,
+		user_gender VARCHAR(10),
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         user_role INT DEFAULT 0
     );
@@ -237,15 +238,16 @@ CREATE TABLE
         otp_code VARCHAR(5) NOT NULL,
         otp_expiration DATETIME NOT NULL,
         is_verified BOOLEAN DEFAULT FALSE,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
 
 CREATE TABLE
     Token (
         user_id VARCHAR(255) NOT NULL,
-        token VARCHAR(255) NOT NULL,
+        token VARCHAR(1000) NOT NULL,
         token_expiration DATETIME NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (user_id, token),
+        PRIMARY KEY (user_id),
         FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
