@@ -17,10 +17,8 @@ export async function getInfoProfileUser(req, res) {
             data: {
                 ...data_account,
                 ...data_profile,
-                media: {
-                    avatar: data_media.filter(media => media.media_type === 'avatar'),
-                    cover: data_media.filter(media => media.media_type === 'cover'),
-                }
+                avatar: data_media.find(media => media.media_type === 'avatar').media_link ?? null,
+                cover: data_media.find(media => media.media_type === 'cover').media_link ?? null,
             }
 
         });

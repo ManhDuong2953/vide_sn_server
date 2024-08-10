@@ -55,7 +55,7 @@ const updateUserProfile = async (req, res) => {
             user_school,
             user_slogan
         });
-        const result = await userProfile.update();
+        const result = await userProfile.update();  
         if (result > 0) {
             res.status(200).json({ status: true, message: 'User profile updated successfully' });
         } else {

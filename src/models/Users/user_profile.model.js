@@ -4,10 +4,11 @@ class UserProfile {
     constructor(data) {
         this.user_id = data.user_id;
         this.date_of_birth = data.date_of_birth;
-        this.user_address = data.user_address;
-        this.user_school = data.user_school;
-        this.user_slogan = data.user_slogan;
+        this.user_address = data.user_address || null;
+        this.user_school = data.user_school || null;
+        this.user_slogan = data.user_slogan || null;
     }
+    
 
     async create() {
         try {
@@ -19,6 +20,7 @@ class UserProfile {
                 this.user_school,
                 this.user_slogan
             ]);
+            
             return result.affectedRows;
         } catch (error) {
             return error;
@@ -27,15 +29,22 @@ class UserProfile {
 
     static async getById(user_id) {
         try {
-            const getUserProfileByIdQuery = "SELECT * FROM UserProfile WHERE user_id = ?";
-            const [result] = await db.execute(getUserProfileByIdQuery, [
-                user_id
-            ]);
+            const getUserProfileByIdQuery = `
+                SELECT 
+                    user_id, 
+                    DATE_FORMAT(date_of_birth, '%Y-%m-%d') as date_of_birth, 
+                    user_address, 
+                    user_school, 
+                    user_slogan 
+                FROM UserProfile 
+                WHERE user_id = ?`;
+            const [result] = await db.execute(getUserProfileByIdQuery, [user_id]);            
             return result[0];
         } catch (error) {
             return error;
         }
     }
+    
 
     static async getAll() {
         try {

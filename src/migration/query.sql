@@ -18,7 +18,7 @@ CREATE TABLE
 CREATE TABLE
     UserProfile (
         user_id VARCHAR(255) NOT NULL,
-        date_of_birth DATETIME,
+        date_of_birth DATE,
         user_address VARCHAR(255),
         user_school VARCHAR(255),
         user_slogan VARCHAR(1000),
