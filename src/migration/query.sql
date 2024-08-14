@@ -10,7 +10,8 @@ CREATE TABLE
         user_email VARCHAR(255) NOT NULL,
         user_password VARCHAR(255) NOT NULL,
         user_status INT DEFAULT 1,
-		user_gender VARCHAR(10),
+        user_gender VARCHAR(10),
+        type_account VARCHAR(25) DEFAULT 'register',
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         user_role INT DEFAULT 0
     );
@@ -241,12 +242,12 @@ CREATE TABLE
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
-
 CREATE TABLE
     Token (
         user_id VARCHAR(255) NOT NULL,
         token VARCHAR(1000) NOT NULL,
         token_expiration DATETIME NOT NULL,
+        token_key_encode VARCHAR(1000) NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (user_id),
         FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE

@@ -11,6 +11,7 @@ class Users {
         this.user_gender = data.user_gender;
         this.user_password = data.user_password;
         this.user_status = data.user_status || 1;
+        this.type_account = data.type_account;
         this.created_at = data.created_at || Date.now();
         this.user_role = data.user_role || 0;
     }
@@ -18,7 +19,7 @@ class Users {
     async create() {
         try {
             const user_id = this.user_id ?? generateId("uid_");
-            const createUserQuery = "INSERT INTO User (user_id, user_name, user_nickname, user_email, user_password, user_status, user_gender, user_role) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+            const createUserQuery = "INSERT INTO User (user_id, user_name, user_nickname, user_email, user_password, user_status, user_gender, user_role, type_account) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
             const [result] = await db.execute(createUserQuery, [
                 user_id,
                 this.user_name,
@@ -28,9 +29,11 @@ class Users {
                 this.user_status,
                 this.user_gender || "other",
                 this.user_role,
+                this.type_account || "register",
             ]);
             return result.affectedRows ? user_id : null;
         } catch (error) {
+            console.log(error.message);
             return error;
         }
     }
@@ -43,18 +46,20 @@ class Users {
             ]);
             return result.length > 0;
         } catch (error) {
+            console.log(error.message);
             return false;
         }
     }
 
     static async getById(user_id) {
         try {
-            const getUserByIdQuery = "SELECT user_id, user_name, user_nickname, user_email, user_status, user_gender, created_at, user_role  FROM User WHERE user_id = ?";
+            const getUserByIdQuery = "SELECT user_id, user_name, user_nickname, user_email, user_status, user_gender, created_at, user_role, type_account  FROM User  WHERE user_id = ?";
             const [result] = await db.execute(getUserByIdQuery, [
                 user_id
             ]);
             return result[0];
         } catch (error) {
+            console.log(error.message);
             return error;
         }
     }
@@ -65,6 +70,7 @@ class Users {
             const [result] = await db.execute(getAllUsersQuery);
             return result;
         } catch (error) {
+            console.log(error.message);
             return error;
         }
     }
@@ -83,6 +89,7 @@ class Users {
             ]);
             return result.affectedRows;
         } catch (error) {
+            console.log(error.message);
             return error;
         }
     }
@@ -96,6 +103,7 @@ class Users {
             ]);
             return result.affectedRows;
         } catch (error) {
+            console.log(error.message);
             return error;
         }
     }
@@ -108,6 +116,7 @@ class Users {
             ]);
             return result.affectedRows;
         } catch (error) {
+            console.log(error.message);
             return error;
         }
     }
@@ -126,6 +135,7 @@ class Users {
             const isPasswordValid = compareHash(password, user.user_password);
             return isPasswordValid ? user : false;
         } catch (error) {
+            console.log(error.message);
             return error;
         }
     }

@@ -11,7 +11,6 @@ export async function getInfoProfileUser(req, res) {
             ProfileMedia.getById(id),
         ]);
 
-
         res.status(200).json({
             status: true,
             data: {
