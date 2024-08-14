@@ -1,6 +1,6 @@
 import { Token } from "../../models/Token/token.model";
 import { Users } from "../../models/Users/user_account.model";
-import { generateKeyPlayFair, generateRandomString, playfairEncrypt } from "../../ultils/crypto";
+import { encryptAES, generateRandomString } from "../../ultils/crypto";
 require("dotenv").config();
 
 export default async function Authentication(req, res, next) {
@@ -14,26 +14,8 @@ export default async function Authentication(req, res, next) {
             // Token validation
             if (isValidated.valid) {
                 req.body.accessToken = access_token;
-                // const refreshToken = await Token.checkRefreshTokenByUserID(isValidated?.decoded?.user_id);                
                 next();
             } 
-            // else {
-            //     if (isValidated.msg === 'TokenExpiredError') {
-            //         const infoUser = isValidated?.data;
-            //         const randomKeyRefreshToken = generateKeyPlayFair(); // Tạo chuỗi tự sinh 8 ký tự
-            //         const key_encode = playfairEncrypt(randomKeyRefreshToken); // Mã hóa chuỗi tự sinh
-            //         const new_refresh_token = new Token(infoUser).generateRefreshToken(randomKeyRefreshToken);
-            //         await new Token(infoUser).create(new_refresh_token, randomKeyRefreshToken);
-            //         res.cookie('key_refresh_token_encode', key_encode, { maxAge: parseInt(process.env.TIME_EXPIRED_REFRESH_TOKEN) * 24 * 60 * 60 * 1000, httpOnly: false, secure: true, sameSite: 'None' });
-            //         const new_access_token = new Token(infoUser).generateAccessToken();
-            //         res.cookie('accessToken', new_access_token, { maxAge: parseInt(process.env.TIME_EXPIRED_ACCESS_TOKEN) * 60 * 1000, httpOnly: false, secure: true, sameSite: 'None' });
-            //         res.cookie('refreshToken', new_refresh_token, { maxAge: parseInt(process.env.TIME_EXPIRED_REFRESH_TOKEN) * 24 * 60 * 60 * 1000, httpOnly: false, secure: true, sameSite: 'None' });
-            //         req.body.accessToken = new_access_token;
-            //         next();
-            //     } else {
-            //         throw new Error("Token đăng nhập không hợp lệ");
-            //     }
-            // }
         } else {
             console.log("Đăng nhập bình thường");
             
@@ -41,10 +23,10 @@ export default async function Authentication(req, res, next) {
             if (user_email && user_password) {
                 const infoUser = await Users.login(user_email, user_password);
                 if (infoUser?.user_id) {
-                    const randomKeyRefreshToken = generateKeyPlayFair(); // Tạo chuỗi tự sinh 8 ký tự
+                    const randomKeyRefreshToken = generateRandomString(); // Tạo chuỗi tự sinh 8 ký tự
                     console.log("key chưa encode sau đăng nhập:", randomKeyRefreshToken);
 
-                    const key_encode = playfairEncrypt(randomKeyRefreshToken); // Mã hóa chuỗi tự sinh
+                    const key_encode = encryptAES(randomKeyRefreshToken); // Mã hóa chuỗi tự sinh
                     const new_access_token = new Token(infoUser).generateAccessToken();
                     const new_refresh_token = new Token(infoUser).generateRefreshToken(randomKeyRefreshToken);
                     await new Token(infoUser).create(new_refresh_token, randomKeyRefreshToken);
@@ -56,8 +38,6 @@ export default async function Authentication(req, res, next) {
                 } else {
                     throw new Error('Email hoặc mật khẩu không hợp lệ');
                 }
-            } else {
-                throw new Error('Vui lòng đăng nhập để xác minh tài khoản');
             }
         }
     } catch (error) {
