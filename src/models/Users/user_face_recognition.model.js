@@ -2,15 +2,17 @@ import db from "../../configs/database/database.config";
 
 class UserFaceData {
     constructor(data) {
-        this.user_id = data.user_id;
+        this.user_id_encode = data.user_id_encode;
         this.media_link = data.media_link;
     }
 
     async create() {
         try {
-            const createUserFaceDataQuery = "INSERT INTO UserFaceData (user_id, media_link) VALUES (?, ?);"
+            console.log(this);
+            
+            const createUserFaceDataQuery = "INSERT INTO UserFaceData (user_id_encode, media_link) VALUES (?, ?);"
             const [result] = await db.execute(createUserFaceDataQuery, [
-                this.user_id,
+                this.user_id_encode,
                 this.media_link
             ]);
             return result.affectedRows;
@@ -19,11 +21,11 @@ class UserFaceData {
         }
     }
 
-    static async getById(user_id) {
+    static async getById(user_id_encode) {
         try {
-            const getUserFaceDataByIdQuery = "SELECT * FROM UserFaceData WHERE user_id = ?";
+            const getUserFaceDataByIdQuery = "SELECT * FROM UserFaceData WHERE user_id_encode = ?";
             const [result] = await db.execute(getUserFaceDataByIdQuery, [
-                user_id
+                user_id_encode
             ]);
             return result;
         } catch (error) {
@@ -41,24 +43,14 @@ class UserFaceData {
         }
     }
 
-    async update() {
-        try {
-            const updateUserFaceDataQuery = "UPDATE UserFaceData SET media_link = ? WHERE user_id = ?";
-            const [result] = await db.execute(updateUserFaceDataQuery, [
-                this.media_link,
-                this.user_id
-            ]);
-            return result.affectedRows;
-        } catch (error) {
-            return error;
-        }
-    }
 
-    static async delete(user_id) {
+    static async delete(user_id_encode) {
         try {
-            const deleteUserFaceDataQuery = "DELETE FROM UserFaceData WHERE user_id = ?";
+            console.log(user_id_encode);
+            
+            const deleteUserFaceDataQuery = "DELETE FROM UserFaceData WHERE user_id_encode = ?";
             const [result] = await db.execute(deleteUserFaceDataQuery, [
-                user_id
+                user_id_encode
             ]);
             return result.affectedRows;
         } catch (error) {

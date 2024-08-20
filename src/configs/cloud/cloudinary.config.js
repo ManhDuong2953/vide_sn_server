@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from 'cloudinary';
-import multer from 'multer';
 require("dotenv").config();
 
 cloudinary.config({
@@ -8,12 +7,10 @@ cloudinary.config({
     api_secret: process.env.CLOUD_API_SECRET
 });
 
-// Configure multer for file upload handling
-const upload = multer({ dest: 'uploads/' });
-
+// Define the uploadFile function
 const uploadFile = async (file, folder) => {
     try {
-        // Đặt các tùy chọn chuyển đổi
+        // Set up transformation options
         const options = {
             folder: folder,
             resource_type: 'auto',
@@ -24,12 +21,24 @@ const uploadFile = async (file, folder) => {
             ]
         };
 
-        // Upload file với các tùy chọn chuyển đổi
-        let result = await cloudinary.uploader.upload(file.path, options);
+        // Upload file to Cloudinary using buffer
+        const result = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(options, (error, result) => {
+                if (error) {
+                    console.error('Error uploading file:', error);
+                    return reject(error);
+                }
+                resolve(result);
+            });
+
+            // Converting buffer to stream and piping to Cloudinary
+            require('stream').Readable.from(file.buffer).pipe(uploadStream);
+        });
+
 
         return {
             url: result.secure_url,
-            fileType: result.resource_type // Cloudinary tự xác định loại file
+            fileType: result.resource_type
         };
     } catch (error) {
         console.error('Error uploading file:', error);

@@ -3,9 +3,9 @@ import db from "../../configs/database/database.config";
 class UserSetting {
     constructor(data) {
         this.user_id = data.user_id;
-        this.post_privacy = data.post_privacy || 1;
-        this.story_privacy = data.story_privacy || 1;
-        this.dark_theme = data.dark_theme || 1;
+        this.post_privacy = parseInt(data.post_privacy);
+        this.story_privacy = parseInt(data.story_privacy);
+        this.dark_theme = parseInt(data.dark_theme);
     }
 
     async create() {
@@ -13,9 +13,9 @@ class UserSetting {
             const createUserSettingQuery = "INSERT INTO UserSetting (user_id, post_privacy, story_privacy, dark_theme) VALUES (?, ?, ?, ?);"
             const [result] = await db.execute(createUserSettingQuery, [
                 this.user_id,
-                this.post_privacy,
-                this.story_privacy,
-                this.dark_theme
+                this.post_privacy ?? 1,
+                this.story_privacy ?? 1,
+                this.dark_theme ?? 1
             ]);
             return result.affectedRows;
         } catch (error) {
@@ -25,6 +25,7 @@ class UserSetting {
 
     static async getById(user_id) {
         try {
+
             const getUserSettingByIdQuery = "SELECT * FROM UserSetting WHERE user_id = ?";
             const [result] = await db.execute(getUserSettingByIdQuery, [
                 user_id
@@ -47,18 +48,40 @@ class UserSetting {
 
     async update() {
         try {
-            const updateUserSettingQuery = "UPDATE UserSetting SET post_privacy = ?, story_privacy = ?, dark_theme = ? WHERE user_id = ?";
-            const [result] = await db.execute(updateUserSettingQuery, [
-                this.post_privacy,
-                this.story_privacy,
-                this.dark_theme,
-                this.user_id
-            ]);
+            let updateUserSettingQuery = "UPDATE UserSetting SET";
+            let params = [];
+            let updates = [];
+
+            if (this.post_privacy !== undefined) {
+                updates.push(" post_privacy = ?");
+                params.push(this.post_privacy);
+            }
+            if (this.story_privacy !== undefined) {
+                updates.push(" story_privacy = ?");
+                params.push(this.story_privacy);
+            }
+            if (this.dark_theme !== undefined) {
+                updates.push(" dark_theme = ?");
+                params.push(this.dark_theme);
+            }
+
+            if (updates.length === 0) {
+                throw new Error("Không có trường nào được cập nhật.");
+            }
+
+            updateUserSettingQuery += updates.join(",");
+            updateUserSettingQuery += " WHERE user_id = ?";
+            params.push(this.user_id);
+
+            console.log(this, updateUserSettingQuery, params);
+            const [result] = await db.execute(updateUserSettingQuery, params);
             return result.affectedRows;
         } catch (error) {
-            return error;
+            console.error('Error updating user settings:', error);
+            throw error;
         }
     }
+
 
     static async delete(user_id) {
         try {

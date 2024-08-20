@@ -19,6 +19,8 @@ class ProfileMedia {
             ]);
             return result.affectedRows;
         } catch (error) {
+            console.log(error);
+            
             return error;
         }
     }
@@ -47,17 +49,35 @@ class ProfileMedia {
 
     async update() {
         try {
-            const updateProfileMediaQuery = "UPDATE ProfileMedia SET media_type = ?, media_link = ? WHERE user_id = ?";
-            const [result] = await db.execute(updateProfileMediaQuery, [
-                this.media_type,
-                this.media_link,
-                this.user_id
-            ]);
+            let updateProfileMediaQuery = "UPDATE ProfileMedia SET";
+            let params = [];
+            let updates = [];
+    
+            if (this.media_type) {
+                updates.push(" media_type = ?");
+                params.push(this.media_type);
+            }
+            if (this.media_link) {
+                updates.push(" media_link = ?");
+                params.push(this.media_link);
+            }
+    
+            if (updates.length === 0) {
+                throw new Error("Không có trường nào được cập nhật.");
+            }
+    
+            updateProfileMediaQuery += updates.join(",");
+            updateProfileMediaQuery += " WHERE user_id = ?";
+            params.push(this.user_id);
+    
+            const [result] = await db.execute(updateProfileMediaQuery, params);
             return result.affectedRows;
         } catch (error) {
-            return error;
+            console.error('Error updating profile media:', error);
+            throw error;
         }
     }
+    
 
     static async delete(user_id) {
         try {

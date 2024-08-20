@@ -15,6 +15,10 @@ app.use(logger('dev'));
 // xử lý file, json, url, cookies
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+// {
+//     'user[name]': 'John Doe',
+//     'user[age]': '30'
+//   }
 app.use(cookieParser());
 
 const port = process.env.PORT || 8080;

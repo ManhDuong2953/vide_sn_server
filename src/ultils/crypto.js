@@ -45,6 +45,7 @@ export function generateRandomString(length = 10) {
 
 // Khóa bí mật (bạn nên lưu trữ và quản lý khóa này một cách an toàn)
 const secretKey = process.env.KEY_AES;
+const secretKeySame = process.env.KEY_AES_SAME;
 
 // Hàm mã hóa
 export function encryptAES(text) {
@@ -55,4 +56,27 @@ export function encryptAES(text) {
 export function decryptAES(cipherText) {
     const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
     return bytes.toString(CryptoJS.enc.Utf8);
+}
+
+
+const iv = CryptoJS.enc.Utf8.parse('00000000000000000000000000000000'); // IV cố định
+
+// Hàm mã hóa
+export function encryptAESSame(text) {
+    const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(secretKeySame), {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+    return encrypted.toString();
+}
+
+// Hàm giải mã
+export function decryptAESSame(cipherText) {
+    const decrypted = CryptoJS.AES.decrypt(cipherText, CryptoJS.enc.Utf8.parse(secretKeySame), {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+    return decrypted.toString(CryptoJS.enc.Utf8);
 }

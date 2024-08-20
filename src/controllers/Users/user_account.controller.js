@@ -1,6 +1,7 @@
 import { ProfileMedia } from "../../models/Users/profile_media.model";
 import { Users } from "../../models/Users/user_account.model";
 import { UserProfile } from "../../models/Users/user_profile.model";
+import { UserSetting } from "../../models/Users/user_setting.model";
 //Users role
 // Create a user
 const createUsers = async (req, res) => {
@@ -33,6 +34,12 @@ const createUsers = async (req, res) => {
                 ...data
             }).create();
 
+            const userSetting = new UserSetting({
+                user_id: user_id,
+                ...data
+            });
+            await userSetting.create();
+
             res.status(201).json({ status: true, message: "Tài khoản đã được tạo thành công" });
         } else {
             throw new Error(usersResponse);
@@ -59,6 +66,11 @@ const createUsersBySocialAccount = async (req, res) => {
                 media_type: 'cover',
                 media_link: 'https://res-console.cloudinary.com/der2ygna3/media_explorer_thumbnails/0383e0bb9a4df2d70d94b18c64b34c56/detailed'
             }).create();
+            const userSetting = new UserSetting({
+                user_id: user_id,
+                ...data
+            });
+            await userSetting.create();
             res.status(201).json({ status: true });
         } else {
             throw new Error(usersResponse);
@@ -114,24 +126,26 @@ const getAllUsers = async (req, res) => {
 // Update a user
 const updateUser = async (req, res) => {
     try {
-        console.log("Data: ", req.body);
-        
-        const { user_name, user_nickname, user_email } = req.body;
-        const user = new Users({
-            user_id: req.params.id,
-            user_name,
-            user_nickname,
-            user_email,
-        });
+        const { user_id } = req.params;
+        console.log(req.files.avatar);
+
+        if (!user_id) {
+            return res.status(400).json({ status: false, message: 'Thiếu ID người dùng' });
+        }
+
+        // Kết hợp user_id với các trường trong req.body
+        const user = new Users({ user_id, ...req.body });
+
         const result = await user.update();
+
         if (result > 0) {
-            res.status(200).json({ status: true, message: 'Người dùng đã được cập nhật' });
+            return res.status(200).json({ status: true, message: 'Người dùng đã được cập nhật' });
         } else {
-            res.status(400).json({ status: false, message: 'Lỗi khi cập nhật người dùng' });
+            return res.status(400).json({ status: false, message: 'Lỗi khi cập nhật người dùng' });
         }
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ status: false, message: error.message ?? error });
+        console.error('Error updating user:', error);
+        return res.status(500).json({ status: false, message: 'Lỗi hệ thống khi cập nhật người dùng' });
     }
 };
 

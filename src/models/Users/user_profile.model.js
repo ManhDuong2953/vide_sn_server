@@ -58,19 +58,43 @@ class UserProfile {
 
     async update() {
         try {
-            const updateUserProfileQuery = "UPDATE UserProfile SET date_of_birth = ?, user_address = ?, user_school = ?, user_slogan = ? WHERE user_id = ?";
-            const [result] = await db.execute(updateUserProfileQuery, [
-                this.date_of_birth,
-                this.user_address,
-                this.user_school,
-                this.user_slogan,
-                this.user_id
-            ]);
+            let updateUserProfileQuery = "UPDATE UserProfile SET";
+            let params = [];
+            let updates = [];
+    
+            if (this.date_of_birth) {
+                updates.push(" date_of_birth = ?");
+                params.push(this.date_of_birth);
+            }
+            if (this.user_address) {
+                updates.push(" user_address = ?");
+                params.push(this.user_address);
+            }
+            if (this.user_school) {
+                updates.push(" user_school = ?");
+                params.push(this.user_school);
+            }
+            if (this.user_slogan) {
+                updates.push(" user_slogan = ?");
+                params.push(this.user_slogan);
+            }
+    
+            if (updates.length === 0) {
+                throw new Error("Không có trường nào được cập nhật.");
+            }
+    
+            updateUserProfileQuery += updates.join(",");
+            updateUserProfileQuery += " WHERE user_id = ?";
+            params.push(this.user_id);
+    
+            const [result] = await db.execute(updateUserProfileQuery, params);
             return result.affectedRows;
         } catch (error) {
-            return error;
+            console.error('Error updating user profile:', error);
+            throw error;
         }
     }
+    
 
     static async delete(user_id) {
         try {
