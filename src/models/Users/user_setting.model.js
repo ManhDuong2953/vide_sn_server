@@ -10,12 +10,14 @@ class UserSetting {
 
     async create() {
         try {
+            console.log(this);
+            
             const createUserSettingQuery = "INSERT INTO UserSetting (user_id, post_privacy, story_privacy, dark_theme) VALUES (?, ?, ?, ?);"
             const [result] = await db.execute(createUserSettingQuery, [
                 this.user_id,
-                this.post_privacy ?? 1,
-                this.story_privacy ?? 1,
-                this.dark_theme ?? 1
+                1,
+                1,
+                1
             ]);
             return result.affectedRows;
         } catch (error) {

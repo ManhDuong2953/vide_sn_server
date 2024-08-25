@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export default async function Authentication(req, res, next) {    
+export default async function Authentication(req, res, next) {
     try {
         const access_token = req.headers?.authorization?.split(' ')[1];
 
@@ -18,7 +18,8 @@ export default async function Authentication(req, res, next) {
             }
         }
 
-        const { user_email, user_password, user_id_encode } = req.body;
+        const { user_email, user_password, user_id_login, user_id_encode } = req.body;
+        console.log({ user_email, user_password, user_id_login, user_id_encode });
 
         if (user_email && user_password) {
             const infoUser = await Users.login(user_email, user_password);
@@ -26,12 +27,20 @@ export default async function Authentication(req, res, next) {
                 throw new Error('Email hoặc mật khẩu không hợp lệ');
             }
             await handleTokenGeneration(req, res, next, infoUser);
+        } else if (user_id_login) {
+            console.log("vào");
+            
+            const infoUser = await Users.loginWithUserID(user_id_login, user_password);
+            if (!infoUser?.user_id) {
+                throw new Error('Thông tin người dùng không hợp lệ');
+            }
+            await handleTokenGeneration(req, res, next, infoUser);
         } else if (user_id_encode) {
-            
+
             const user_id = decryptAESSame(user_id_encode);
-            
+
             const infoUser = await Users.getById(user_id);
-            
+
             if (infoUser) {
                 await handleTokenGeneration(req, res, next, infoUser);
             }

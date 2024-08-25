@@ -143,6 +143,8 @@ class Users {
         }
     }
 
+
+
     static async login(email, password) {
         try {
             const getUserQuery = "SELECT * FROM User WHERE user_email = ?";
@@ -161,6 +163,25 @@ class Users {
             return error;
         }
     }
+    static async loginWithUserID(userID, password) {
+        try {
+            const getUserQuery = "SELECT * FROM User WHERE user_id = ?";
+            const [result] = await db.execute(getUserQuery, [
+                userID
+            ]);
+            if (result.length === 0) {
+                return false;
+            }
+
+            const user = result[0];
+            const isPasswordValid = compareHash(password, user.user_password);
+            return isPasswordValid ? user : false;
+        } catch (error) {
+            console.log(error.message);
+            return error;
+        }
+    }
+    
 }
 
 export {

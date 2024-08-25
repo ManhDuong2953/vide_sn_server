@@ -3,7 +3,7 @@ import { UserSetting } from "../../models/Users/user_setting.model";
 // Get a user setting by ID
 const getUserSettingById = async (req, res) => {
     try {
-        const userSetting = await UserSetting.getById(req.params.id);
+        const userSetting = await UserSetting.getById(req.body?.data?.user_id);
         if (userSetting) {
             res.status(200).json({ status: true, data: userSetting });
         } else {
@@ -21,13 +21,13 @@ const updateUserSetting = async (req, res) => {
     try {
         const { post_privacy, story_privacy, dark_theme } = req.body;
         const userSetting = new UserSetting({
-            user_id: req.params.id,
+            user_id: req.body?.data?.user_id,
             post_privacy,
             story_privacy,
             dark_theme
         });
         console.log({
-            user_id: req.params.id,
+            user_id: req.body?.data?.user_id,
             post_privacy,
             story_privacy,
             dark_theme

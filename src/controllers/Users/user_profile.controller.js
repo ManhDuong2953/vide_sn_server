@@ -47,7 +47,7 @@ const getAllUserProfiles = async (req, res) => {
 // Update a user profile
 const updateUserProfile = async (req, res) => {
     try {
-        const { date_of_birth, user_address, user_school, user_slogan } = req.body;
+        const { date_of_birth, user_address, user_school, user_slogan } = req.body;        
         const userProfile = new UserProfile({
             user_id: req.params.id,
             date_of_birth,

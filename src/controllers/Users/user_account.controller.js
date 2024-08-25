@@ -55,6 +55,7 @@ const createUsersBySocialAccount = async (req, res) => {
         const data = req.body;
         const users = new Users({ ...data, user_id: `uid_${data?.user_id}` });
         const user_id = await users.create();
+
         if (user_id) {
             new ProfileMedia({
                 user_id: user_id,
@@ -66,9 +67,12 @@ const createUsersBySocialAccount = async (req, res) => {
                 media_type: 'cover',
                 media_link: 'https://res-console.cloudinary.com/der2ygna3/media_explorer_thumbnails/0383e0bb9a4df2d70d94b18c64b34c56/detailed'
             }).create();
-            const userSetting = new UserSetting({
-                user_id: user_id,
+            new UserProfile({
+                user_id,
                 ...data
+            }).create();
+            const userSetting = new UserSetting({
+                user_id: user_id
             });
             await userSetting.create();
             res.status(201).json({ status: true });

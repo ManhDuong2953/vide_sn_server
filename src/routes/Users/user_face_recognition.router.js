@@ -12,12 +12,12 @@ const upload = multer({ storage });
 const UserFaceRecognitionRouter = (router = Router()) => {
     router.post('/login-face-recognition', Authentication, Authorization, loginUserFaceData);
     // Handle multiple images with field name 'images_face_recognition'
-    router.post('/create-face-recognition/:id', upload.fields([
+    router.post('/create-face-recognition/', upload.fields([
         { name: 'images_face_recognition', maxCount: 10 }
-    ]), createUserFaceData);
-    router.get('/get-face-recognition/:id', getUserFaceDataById);
+    ]),Authentication, Authorization, createUserFaceData);
+    router.get('/get-face-recognition/',Authentication, Authorization, getUserFaceDataById);
     router.get('/get-all-face-recognition', getAllUserFaceData);
-    router.delete('/delete-face-recognition/:id', deleteUserFaceData);
+    router.delete('/delete-face-recognition/',Authentication, Authorization, deleteUserFaceData);
 
     return router;
 };

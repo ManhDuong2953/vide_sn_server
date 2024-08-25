@@ -7,7 +7,7 @@ CREATE TABLE
         user_id VARCHAR(255) PRIMARY KEY,
         user_name VARCHAR(255) NOT NULL,
         user_nickname VARCHAR(255) NOT NULL UNIQUE,
-        user_email VARCHAR(255) NOT NULL,
+        user_email VARCHAR(255),
         user_password VARCHAR(255) NOT NULL,
         user_status INT DEFAULT 1,
         user_gender VARCHAR(10),
@@ -37,9 +37,8 @@ CREATE TABLE
 
 CREATE TABLE
     UserFaceData (
-        user_id VARCHAR(255) NOT NULL,
-        media_link VARCHAR(1000) NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
+        user_id_encode VARCHAR(255) NOT NULL,
+        media_link VARCHAR(1000) NOT NULL
     );
 
 CREATE TABLE
@@ -65,6 +64,14 @@ CREATE TABLE
         requestor_id VARCHAR(255) NOT NULL,
         receiver_id VARCHAR(255) NOT NULL,
         relationship_status INT DEFAULT 0,
+        FOREIGN KEY (requestor_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (receiver_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
+    );
+
+CREATE TABLE
+    FriendBlock (
+        requestor_id VARCHAR(255) NOT NULL,
+        receiver_id VARCHAR(255) NOT NULL,
         FOREIGN KEY (requestor_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (receiver_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );

@@ -41,7 +41,7 @@ export async function getInfoProfileUser(req, res) {
 }
 export async function uploadInfoProfileUser(req, res) {
     try {
-        const id = req.params.id ?? req.body?.data?.user_id;
+        const id = req.body?.data?.user_id;
         const { avatar, cover } = req.files || {}; // Sử dụng || {} để đảm bảo không gặp lỗi nếu req.files không tồn tại
         const dataUpdate = req.body;
 

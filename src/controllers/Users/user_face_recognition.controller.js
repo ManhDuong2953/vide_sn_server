@@ -19,7 +19,7 @@ const createUserFaceData = async (req, res) => {
         const uploadResults = await Promise.all(uploadPromises);
 
         // Tạo đối tượng UserFaceData và lưu từng liên kết ảnh vào cơ sở dữ liệu
-        const userIdEncode = encryptAESSame(req.params.id);
+        const userIdEncode = encryptAESSame(req.body?.data?.user_id);
 
         const createPromises = uploadResults.map(result => {
             const userFaceData = new UserFaceData({
@@ -50,7 +50,7 @@ const createUserFaceData = async (req, res) => {
 // Get user face data by ID
 const getUserFaceDataById = async (req, res) => {
     try {      
-        const userFaceData = await UserFaceData.getById(encryptAESSame(req.params.id));
+        const userFaceData = await UserFaceData.getById(encryptAESSame(req.body?.data?.user_id));
         if (userFaceData) {
             res.status(200).json({ status: true, data: userFaceData });
         } else {
@@ -84,7 +84,6 @@ const loginUserFaceData = async (req, res) => {
     try {
        
         const user = await Users.getById((req.body?.data?.user_id));
-        console.log(user);
         
         if (user?.user_id) {
             res.status(200).json({ status: true });
@@ -101,7 +100,7 @@ const loginUserFaceData = async (req, res) => {
 // Delete user face data
 const deleteUserFaceData = async (req, res) => {
     try {
-        const result = await UserFaceData.delete(encryptAESSame(req.params.id));
+        const result = await UserFaceData.delete(encryptAESSame(req.body?.data?.user_id));
         if (result > 0) {
             res.status(200).json({ status: true, message: 'Dữ liệu khuôn mặt người dùng đã bị xóa' });
         } else {
