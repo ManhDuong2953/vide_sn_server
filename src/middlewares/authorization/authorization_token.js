@@ -4,11 +4,14 @@ require("dotenv").config()
 export async function Authorization(req, res, next) {
     try {
         const access_token = req.body.accessToken;
+        
         if (!access_token) {
             return res.status(401).json({ status: false, message: 'Không thể xác thực' });
         }
         const dataUser = jwt.decode(access_token);
+        
         req.body = { ...req.body, status: 'validated', data: dataUser };
+        
         next();
 
     } catch (error) {

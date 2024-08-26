@@ -9,6 +9,7 @@ class ProfileMedia {
     }
 
     async create() {
+      
         try {
             const createProfileMediaQuery = "INSERT INTO ProfileMedia (user_id, media_type, media_link, created_at) VALUES (?, ?, ?, ?);"
             const [result] = await db.execute(createProfileMediaQuery, [

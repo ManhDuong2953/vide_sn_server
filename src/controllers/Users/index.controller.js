@@ -44,6 +44,7 @@ export async function uploadInfoProfileUser(req, res) {
         const id = req.body?.data?.user_id;
         const { avatar, cover } = req.files || {}; // Sử dụng || {} để đảm bảo không gặp lỗi nếu req.files không tồn tại
         const dataUpdate = req.body;
+        
 
         // Khởi tạo các đối tượng từ lớp tương ứng
         const user = new Users(dataUpdate);
@@ -67,7 +68,7 @@ export async function uploadInfoProfileUser(req, res) {
             createProfileMedia(avatar ? avatar[0] : null, process.env.NAME_FOLDER_USER_AVT),
             createProfileMedia(cover ? cover[0] : null, process.env.NAME_FOLDER_USER_COVER),
         ]);
-
+        
         // Kiểm tra kết quả cập nhật
         const allRowsAffected = results.slice(0, 2).every(result => result === 1) && // Kiểm tra kết quả cập nhật user và userProfile
                             (results[2] === null || results[2] === 1) && // Kiểm tra kết quả upload avatar (nếu có)

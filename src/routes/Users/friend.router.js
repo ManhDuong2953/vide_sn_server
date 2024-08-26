@@ -15,7 +15,7 @@ const FriendRouter = (router = Router()) => {
     router.post('/status', statusFriend);
 
     // Lấy danh sách bạn bè
-    router.post('/list/:id', getFriends);
+    router.get('/list/:id', getFriends);
 
     // Lấy tất cả các yêu cầu kết bạn bởi ID của người nhận
     router.post('/requests/list', Authentication, Authorization, getAllRequestorsByReceiverId);

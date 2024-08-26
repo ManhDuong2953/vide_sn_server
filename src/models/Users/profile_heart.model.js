@@ -26,7 +26,7 @@ class ProfileHeart {
     static async getByUserId(user_id) {
         try {
             const getHeartsQuery = `
-                SELECT hearted_user_id, created_at 
+                SELECT user_id, hearted_user_id, created_at 
                 FROM ProfileHeart 
                 WHERE user_id = ?;
             `;
