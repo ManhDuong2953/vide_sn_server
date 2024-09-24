@@ -33,8 +33,6 @@ export default async function Authentication(req, res, next) {
       }
       await handleTokenGeneration(req, res, next, infoUser);
     } else if (user_id_login) {
-      console.log("vào");
-
       const infoUser = await Users.loginWithUserID(
         user_id_login,
         user_password

@@ -17,6 +17,14 @@ CREATE TABLE
     );
 
 CREATE TABLE
+    UserKeysPair (
+        user_id VARCHAR(255),
+        public_key TEXT,
+        private_key_decode TEXT,
+        FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
+    );
+
+CREATE TABLE
     UserProfile (
         user_id VARCHAR(255) NOT NULL,
         date_of_birth DATE,
@@ -84,6 +92,17 @@ CREATE TABLE
         story_privacy INT DEFAULT 1,
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         heart_quantity INT DEFAULT 0,
+        FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
+    );
+
+CREATE TABLE
+    Notifications (
+        notification_id VARCHAR(255) PRIMARY KEY,
+        user_id VARCHAR(255) NOT NULL,
+        type_notification VARCHAR(255) NOT NULL,
+        content_notification VARCHAR(255),
+        url_direct VARCHAR(1000),
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
@@ -193,17 +212,17 @@ CREATE TABLE
 
 CREATE TABLE
     PrivateMessage (
-        messenger_id VARCHAR(255) PRIMARY KEY,
-        private_room_id VARCHAR(255),
-        content_text TEXT,
-        media_link VARCHAR(1000),
-        content_type VARCHAR(255) DEFAULT 'text',
-        reply_to_id VARCHAR(255),
+        messenger_id INT PRIMARY KEY AUTO_INCREMENT,
         sender_id VARCHAR(255) NOT NULL,
         receiver_id VARCHAR(255) NOT NULL,
+        content_text_encrypt TEXT,
+        content_text_encrypt_by_owner TEXT,
+        content_type VARCHAR(255) DEFAULT 'text',
+        name_file varchar(1000) DEFAULT NULL,
+        reply_text TEXT DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (sender_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (receiver_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (receiver_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     );
 
 CREATE TABLE
@@ -213,7 +232,7 @@ CREATE TABLE
         content_text TEXT,
         media_link VARCHAR(1000),
         content_type VARCHAR(255) DEFAULT 'text',
-        reply_to_id VARCHAR(255),
+        reply_text TEXT DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (group_id) REFERENCES GroupChanel (group_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (sender_id) REFERENCES GroupMember (member_id) ON DELETE CASCADE ON UPDATE CASCADE

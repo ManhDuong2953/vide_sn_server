@@ -14,6 +14,7 @@ import UserFaceRecognitionRouter from "./user_face_recognition.router";
 import FriendRouter from "./friend.router";
 import FriendBlockRouter from "./friend_block.router";
 import ProfileHeartRouter from "./profile_heart.router";
+import UserKeysPairRouter from "./user_keys_pair.router";
 // Cấu hình Multer để xử lý nhiều trường ảnh
 const storage = multer.memoryStorage(); // Bạn có thể thay đổi sang multer.diskStorage() nếu cần
 const upload = multer({ storage });
@@ -47,6 +48,8 @@ const UserRouter = (router = Router()) => {
     Authorization,
     uploadInfoProfileUser
   );
+  router.use('/keys_pair', UserKeysPairRouter(express.Router()));
+  
   return router;
 };
 

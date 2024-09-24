@@ -47,21 +47,25 @@ export function generateRandomString(length = 10) {
 const secretKey = process.env.KEY_AES;
 const secretKeySame = process.env.KEY_AES_SAME;
 
+
 // Hàm mã hóa
-export function encryptAES(text) {
-    return CryptoJS.AES.encrypt(text, secretKey).toString();
+export function encryptAES(text, secretKeyAES = secretKey) {
+  console.log(text, secretKeyAES);
+  return CryptoJS.AES.encrypt(text, secretKeyAES).toString();
 }
 
 // Hàm giải mã
-export function decryptAES(cipherText) {
-    const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
-    return bytes.toString(CryptoJS.enc.Utf8);
+export function decryptAES(cipherText, secretKeyAES = secretKey) {
+  
+  const bytes = CryptoJS.AES.decrypt(cipherText, secretKeyAES);
+  return bytes.toString(CryptoJS.enc.Utf8);
 }
+
 
 
 const iv = CryptoJS.enc.Utf8.parse('00000000000000000000000000000000'); // IV cố định
 
-// Hàm mã hóa
+// Hàm mã hóa với đầu vào và đầu ra có lượng chuỗi ký tự bằng nhau
 export function encryptAESSame(text) {
     const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(secretKeySame), {
         iv: iv,
@@ -80,3 +84,21 @@ export function decryptAESSame(cipherText) {
     });
     return decrypted.toString(CryptoJS.enc.Utf8);
 }
+
+
+
+//Hàm RSA
+
+export function encryptWithPublicKey(data, public_key) {
+  return crypto.publicEncrypt(public_key, Buffer.from(data)).toString('hex');
+}
+
+export function decryptWithPrivateKey(encryptedData, private_key) {
+  try {
+    return crypto.privateDecrypt(private_key, Buffer.from(encryptedData, 'hex')).toString();
+  } catch (error) {
+    console.error('Decryption failed:', error.message);
+    return null; // Hoặc một giá trị khác tùy bạn xử lý khi giải mã thất bại
+  }
+}
+
