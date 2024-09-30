@@ -13,6 +13,7 @@ export default async function Authentication(req, res, next) {
   try {
     const access_token = req.headers?.authorization?.split(" ")[1];
 
+    //Login với token
     if (access_token) {
       const isValidated = await Token.validate(access_token);
 
@@ -22,26 +23,31 @@ export default async function Authentication(req, res, next) {
       }
     }
 
-    const { user_email, user_password, user_id_login, user_id_encode } =
+    const { user_email, user_password, user_id_login, user_id_encode, type_account } =
       req.body;
-    console.log({ user_email, user_password, user_id_login, user_id_encode });
+    console.log({ user_email, user_password, user_id_login, user_id_encode, type_account });
 
+    //login với email và password
     if (user_email && user_password) {
-      const infoUser = await Users.login(user_email, user_password);
+      const infoUser = await Users.login(user_email, user_password,type_account);
       if (!infoUser?.user_id) {
         throw new Error("Email hoặc mật khẩu không hợp lệ");
       }
       await handleTokenGeneration(req, res, next, infoUser);
+
     } else if (user_id_login) {
+      // Đăng nhập bằng social network
       const infoUser = await Users.loginWithUserID(
         user_id_login,
-        user_password
+        user_password,
+        type_account
       );
       if (!infoUser?.user_id) {
         throw new Error("Thông tin người dùng không hợp lệ");
       }
       await handleTokenGeneration(req, res, next, infoUser);
     } else if (user_id_encode) {
+      //login bằng khuôn mặt
       const user_id = decryptAESSame(user_id_encode);
 
       const infoUser = await Users.getById(user_id);

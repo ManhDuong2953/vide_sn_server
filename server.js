@@ -2,6 +2,7 @@ import express from "express";
 import RouterAPI from "./src/routes";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { ExpressPeerServer } from "peer";
 import logger from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -31,8 +32,20 @@ let users = [];
 // Khởi tạo server HTTP
 const server = createServer(app);
 
+
+// Cấu hình Peer Server
+const peerServer = ExpressPeerServer(server, {
+  path: '/',
+  debug: true
+});
+
+// Sử dụng Peer Server middleware
+app.use('/peerjs', peerServer);
+
+// Initialize socket.io
 const io = initializeSocket(server, users);
-export { io, users};
+export { io, users };
+
 // Khởi động server HTTP
 server.listen(port, () => {
   console.log("Máy chủ Vibe đang chạy trên cổng:", port);

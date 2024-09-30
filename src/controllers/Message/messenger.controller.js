@@ -11,14 +11,15 @@ const createMessage = async (req, res) => {
     const friend_id = req.params?.id ?? null;
     let content_text = req.body?.content_text ?? "";
     const content_type = req.body?.content_type ?? "";
-    const name_file = req.body?.name_file ?? "";
-    console.log(files[0]);
-    
+    const reply_text = req.body?.reply_text ?? null;
+    let name_file = req.body?.name_file ?? "";
+
     if (files.length > 0) {
-      content_text = (await uploadFile(files[0], process.env.NAME_FOLDER_MESSENGER))?.url;
+      content_text = (
+        await uploadFile(files[0], process.env.NAME_FOLDER_MESSENGER)
+      )?.url;
     }
 
-    
     // Check for missing required fields
     if (!user_id || !friend_id || !content_text) {
       return res
@@ -26,11 +27,13 @@ const createMessage = async (req, res) => {
         .json({ status: false, message: "Dữ liệu nhập vào không hợp lệ" });
     }
 
+
     // Create a new message instance
     const newMessage = new Message({
       sender_id: user_id,
       receiver_id: friend_id,
       content_type: content_type,
+      reply_text: reply_text,
       name_file: name_file,
     });
 
@@ -46,6 +49,7 @@ const createMessage = async (req, res) => {
         content_text: content_text,
         content_type: content_type,
         name_file: name_file,
+        reply_text: reply_text,
       });
       return res.status(201).json({ status: true });
     } else {
@@ -100,6 +104,7 @@ const getAllMessages = async (req, res) => {
           name_file: item.name_file,
           content_type: item.content_type,
           created_at: item.created_at,
+          reply_text: item.reply_text,
         };
       })
     );

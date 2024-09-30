@@ -58,16 +58,18 @@ class Message {
           content_text_encrypt,
           content_text_encrypt_by_owner,
           content_type,
+          reply_text,
           name_file,
           sender_id,
           receiver_id
-        ) VALUES (?, ?, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, ?, ?, ?);
       `;
 
       const [result] = await db.execute(createMessageQuery, [
         textEnCryptoRSA,
         textEnCryptoRSAForSender,
         this.content_type,
+        this.reply_text,
         this.name_file,
         this.sender_id,
         this.receiver_id,

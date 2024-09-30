@@ -145,11 +145,12 @@ class Users {
 
 
 
-    static async login(email, password) {
+    static async login(email, password, type_account) {
         try {
-            const getUserQuery = "SELECT * FROM User WHERE user_email = ?";
+            const getUserQuery = "SELECT * FROM User WHERE user_email = ? AND type_account = ?";
             const [result] = await db.execute(getUserQuery, [
-                email
+                email,
+                type_account
             ]);
             if (result.length === 0) {
                 return false;
@@ -163,11 +164,12 @@ class Users {
             return error;
         }
     }
-    static async loginWithUserID(userID, password) {
+    static async loginWithUserID(userID, password, type_account) {
         try {
-            const getUserQuery = "SELECT * FROM User WHERE user_id = ?";
+            const getUserQuery = "SELECT * FROM User WHERE user_id = ? AND type_account = ?" ;
             const [result] = await db.execute(getUserQuery, [
-                userID
+                userID, 
+                type_account
             ]);
             if (result.length === 0) {
                 return false;

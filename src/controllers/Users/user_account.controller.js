@@ -88,8 +88,8 @@ const createUsersBySocialAccount = async (req, res) => {
 // Login a user
 const loginUser = async (req, res) => {
     try {
-        const { user_email, user_password } = req.body;
-        const user = await Users.login(user_email, user_password);
+        const { user_email, user_password, type_account } = req.body;
+        const user = await Users.login(user_email, user_password, type_account);
         if (user) {
             res.status(200).json({ status: true, message: 'Đăng nhập thành công', data: user });
         } else {

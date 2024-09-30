@@ -7,21 +7,28 @@ cloudinary.config({
     api_secret: process.env.CLOUD_API_SECRET
 });
 
-// Define the uploadFile function
 const uploadFile = async (file, folder) => {
     try {
-        // Set up transformation options
+        // Kiểm tra loại file dựa trên MIME type
+        const mimeType = file.mimetype;
+
+        // Thiết lập resource_type dựa trên loại file
+        let resourceType = 'auto';  // Mặc định Cloudinary sẽ tự phát hiện
+        if (!mimeType.startsWith('image/') && !mimeType.startsWith('video/')) {
+            resourceType = 'raw';  // Dùng 'raw' cho các tệp không phải ảnh hoặc video
+        }
+
+        // Tùy chọn upload
         const options = {
             folder: folder,
-            resource_type: 'auto',
+            resource_type: resourceType,  // Sử dụng auto hoặc raw dựa trên loại file
             transformation: [
-                { width: 1000, crop: "scale" },
-                { quality: "auto" },
-                { fetch_format: "auto" }
+                { quality: "auto" },  // Tự động tối ưu chất lượng nếu là ảnh hoặc video
+                { fetch_format: "auto" }  // Tự động chuyển đổi định dạng nếu cần
             ]
         };
 
-        // Upload file to Cloudinary using buffer
+        // Upload file lên Cloudinary
         const result = await new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream(options, (error, result) => {
                 if (error) {
@@ -31,10 +38,9 @@ const uploadFile = async (file, folder) => {
                 resolve(result);
             });
 
-            // Converting buffer to stream and piping to Cloudinary
+            // Chuyển buffer thành stream và upload
             require('stream').Readable.from(file.buffer).pipe(uploadStream);
         });
-
 
         return {
             url: result.secure_url,
