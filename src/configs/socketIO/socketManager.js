@@ -43,16 +43,32 @@ const initializeSocket = (httpServer, users) => {
         io.emit("onlineUsers", getAllOnlineUsers(users));
       });
 
-
       //Lắng nghe có sự kiện mời vào cuộc gọi
-      socket.on("join-room", (roomId, sender_id, receiver_id) => {
-        socket.join(roomId);
-        socket.to(receiver_id).emit("user-connected", sender_id);
+      socket.on("callUser", (data) => {
+        io.to(getSocketIdByUserId(data?.receiver_id, users)).emit(
+          "user-calling",
+          data
+        );
 
-        socket.on("disconnect", () => {
-          socket.to(roomId).emit("user-disconnected", sender_id);
-        });
       });
+      // Chấp nhận cuộc gọi
+      socket.on("acceptCallUser", (data) => {      
+        io.to(getSocketIdByUserId(data?.sender_id, users)).emit(
+          "statusAcceptedCallUser",
+          {
+            status: data?.status,
+          }
+        );
+      });
+      // Từ chối cuộc gọi
+
+      // // Đóng cuộc gọi
+      // socket.on("cancelCallUser", () =>{
+      //   io.to(getSocketIdByUserId(data?.receiver_id, users)).emit(
+      //     "cancelCallUser",
+      //     data
+      //   );
+      // })
     });
   }
 

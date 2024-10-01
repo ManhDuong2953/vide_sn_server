@@ -222,12 +222,12 @@ CREATE TABLE
         reply_text TEXT DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (sender_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (receiver_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (receiver_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE
     GroupMessage (
-        group_id VARCHAR(255) NOT NULL,
+        group_id VARCHAR(255) NOT NULL PRIMARY KEY,
         sender_id VARCHAR(255) NOT NULL,
         content_text TEXT,
         media_link VARCHAR(1000),
