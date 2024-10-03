@@ -2,13 +2,15 @@ import { Server } from "socket.io"; // Đảm bảo import đúng Server từ so
 require("dotenv").config();
 
 let io; // Biến để lưu instance của socket.io
-
 const initializeSocket = (httpServer, users) => {
   if (!io) {
     // Kiểm tra xem io đã được khởi tạo chưa
     io = new Server(httpServer, {
       cors: {
         origin: process.env.HOST || "http://localhost:3000",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Content-Type"],
+        credentials: true,
       },
     });
 
@@ -24,14 +26,49 @@ const initializeSocket = (httpServer, users) => {
         // Gửi danh sách online hiện tại cho tất cả người dùng
         io.emit("onlineUsers", getAllOnlineUsers(users));
       });
-      // Lắng nghe sự kiẹn đang viết tin nhắn
+
+      // Lắng nghe sự kiện đang viết tin nhắn
       socket.on("senderWritting", (data) => {
-        io.to(getSocketIdByUserId(data?.receiver_id, users)).emit(
-          "receiverNotifiWritting",
-          {
+        const receiverSocketId = getSocketIdByUserId(data?.receiver_id, users);
+        if (receiverSocketId) {
+          io.to(receiverSocketId).emit("receiverNotifiWritting", {
             sender_id: data?.sender_id,
             status: data?.status,
-          }
+          });
+        } else {
+          console.error(`No socket found for user ID: ${data?.receiver_id}`);
+        }
+      });
+
+      // Lắng nghe có sự kiện mời vào cuộc gọi
+      socket.on("callUser", (data) => {
+        const receiverSocketId = getSocketIdByUserId(data?.receiver_id, users);
+        if (receiverSocketId) {
+          io.to(receiverSocketId).emit("user-calling", data);
+        } else {
+          console.error(`No socket found for user ID: ${data?.receiver_id}`);
+        }
+      });
+
+      // Chấp nhận cuộc gọi
+      socket.on("acceptCallUser", (data) => {
+        const senderSocketId = getSocketIdByUserId(data?.sender_id, users);
+        if (senderSocketId) {
+          io.to(senderSocketId).emit("statusAcceptedCallUser", {
+            status: data?.status,
+          });
+        } else {
+          console.error(`No socket found for user ID: ${data?.sender_id}`);
+        }
+      });
+
+      // Chuỗi sự kiện với Peer
+
+      // Nhận peerID người gọi
+      socket.on("getPeerIDCaller", (data) => {
+        io.to(getSocketIdByUserId(data?.sender_id, users)).emit(
+          "sendPeerIDCaller",
+          data?.peer_id
         );
       });
 
@@ -42,33 +79,6 @@ const initializeSocket = (httpServer, users) => {
         // Cập nhật danh sách online cho tất cả người dùng
         io.emit("onlineUsers", getAllOnlineUsers(users));
       });
-
-      //Lắng nghe có sự kiện mời vào cuộc gọi
-      socket.on("callUser", (data) => {
-        io.to(getSocketIdByUserId(data?.receiver_id, users)).emit(
-          "user-calling",
-          data
-        );
-
-      });
-      // Chấp nhận cuộc gọi
-      socket.on("acceptCallUser", (data) => {      
-        io.to(getSocketIdByUserId(data?.sender_id, users)).emit(
-          "statusAcceptedCallUser",
-          {
-            status: data?.status,
-          }
-        );
-      });
-      // Từ chối cuộc gọi
-
-      // // Đóng cuộc gọi
-      // socket.on("cancelCallUser", () =>{
-      //   io.to(getSocketIdByUserId(data?.receiver_id, users)).emit(
-      //     "cancelCallUser",
-      //     data
-      //   );
-      // })
     });
   }
 
@@ -79,7 +89,7 @@ const initializeSocket = (httpServer, users) => {
 const addUser = (socketId, userId, users) => {
   const existingUser = users.find((user) => user.userId === userId);
   if (existingUser) {
-    existingUser.socketId = socketId; // Cập nhật socketId nếu đã tồn tại
+    existingUser.socketId = socketId; // Cập nhật soc ketId nếu đã tồn tại
   } else {
     users.push({ socketId, userId }); // Thêm người dùng mới
   }

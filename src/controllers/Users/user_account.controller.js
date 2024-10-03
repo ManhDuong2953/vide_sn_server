@@ -91,7 +91,7 @@ const loginUser = async (req, res) => {
         const { user_email, user_password, type_account } = req.body;
         const user = await Users.login(user_email, user_password, type_account);
         if (user) {
-            res.status(200).json({ status: true, message: 'Đăng nhập thành công', data: user });
+            res.status(200).json({ status: true, data: user });
         } else {
             res.status(401).json({ status: false, message: 'Email hoặc mật khẩu không hợp lệ' });
         }

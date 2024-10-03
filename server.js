@@ -33,14 +33,14 @@ let users = [];
 const server = createServer(app);
 
 
-// Cấu hình Peer Server
+// Khởi tạo PeerJS server
 const peerServer = ExpressPeerServer(server, {
-  path: '/',
-  debug: true
+  debug: true,
 });
 
-// Sử dụng Peer Server middleware
+// Sử dụng PeerJS server tại endpoint `/peerjs`
 app.use('/peerjs', peerServer);
+
 
 // Initialize socket.io
 const io = initializeSocket(server, users);

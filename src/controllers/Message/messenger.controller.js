@@ -75,7 +75,7 @@ const getAllMessages = async (req, res) => {
     if (!user_id || !friend_id || !private_key) {
       return res
         .status(400)
-        .json({ status: false, message: "Missing required fields" });
+        .json({ status: false });
     }
 
     const result = await Message.getMessage(user_id, friend_id);
