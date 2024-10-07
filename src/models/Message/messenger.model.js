@@ -1,5 +1,6 @@
 import db from "../../configs/database/database.config";
 import { encryptWithPublicKey } from "../../ultils/crypto";
+import { UserKeysPair } from "../Users/user_keys_pair.model";
 
 class Message {
   constructor(data) {
@@ -14,35 +15,15 @@ class Message {
     this.created_at = data.created_at;
   }
 
-  static async getPublicKeyReceiver(receiver_id) {
-    try {
-      const createMessageQuery = `
-        SELECT public_key FROM UserKeysPair
-        WHERE 
-          (user_id = ?)
-      `;
 
-      const [result] = await db.execute(createMessageQuery, [receiver_id]);
-
-      if (result.length > 0) {
-        return {
-          public_key: result[0]?.public_key,
-        };
-      }
-      return null;
-    } catch (error) {
-      console.error("Error creating message: ", error);
-      throw error;
-    }
-  }
 
   async create(text) {
     try {
-      const publicKeyReceiver = await Message.getPublicKeyReceiver(
+      const publicKeyReceiver = await UserKeysPair.getPublicKeyReceiver(
         this.receiver_id
-      ); // Use Message.getPublicKeyReceiver
+      );
 
-      const publicKeySender = await Message.getPublicKeyReceiver(
+      const publicKeySender = await UserKeysPair.getPublicKeyReceiver(
         this.sender_id
       );
       const textEnCryptoRSA = encryptWithPublicKey(
@@ -114,6 +95,63 @@ class Message {
     } catch (error) {
       console.error("Error fetching messages: ", error);
       throw error;
+    }
+  }
+
+  static async getConversation(user_id) {
+    try {
+      // Truy vấn để lấy danh sách bạn bè đã có hội thoại với user hiện tại
+      const getConversationsQuery = `
+                                    SELECT 
+                                    u.user_id AS friend_id,
+                                    u.user_name AS friend_name,
+                                    pm.media_link AS friend_avatar,
+                                    msg.content_text_encrypt,
+                                    msg.content_text_encrypt_by_owner,
+                                    msg.created_at AS last_message_time,
+                                    msg.sender_id,
+                                    msg.receiver_id
+                                  FROM (
+                                    SELECT 
+                                      *
+                                    FROM 
+                                      PrivateMessage pm
+                                    WHERE 
+                                      (pm.sender_id = ? OR pm.receiver_id = ?)
+                                    AND 
+                                      pm.created_at = (
+                                        SELECT MAX(created_at) 
+                                        FROM PrivateMessage 
+                                        WHERE (sender_id = pm.sender_id AND receiver_id = pm.receiver_id) OR 
+                                              (sender_id = pm.receiver_id AND receiver_id = pm.sender_id)
+                                      )
+                                  ) AS msg
+                                  JOIN user u 
+                                    ON (u.user_id = msg.sender_id OR u.user_id = msg.receiver_id) 
+                                    AND u.user_id != ?
+                                  LEFT JOIN (
+                                    SELECT pm1.user_id, pm1.media_link
+                                    FROM ProfileMedia pm1
+                                    WHERE pm1.media_type = 'avatar'
+                                    AND pm1.created_at = (
+                                      SELECT MAX(created_at) 
+                                      FROM ProfileMedia 
+                                      WHERE user_id = pm1.user_id
+                                      AND media_type = 'avatar'
+                                    )
+                                  ) AS pm
+                                    ON pm.user_id = u.user_id
+                                  ORDER BY last_message_time DESC;
+    `;
+
+      const [conversations] = await db.execute(getConversationsQuery, [
+        user_id,
+        user_id,
+        user_id,
+      ]);
+      return conversations;
+    } catch (error) {
+      console.log(error);
     }
   }
 }

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createMessage,
+  getAllConversations,
   getAllMessages,
 } from "../../controllers/Message/messenger.controller";
 import { Authorization } from "../../middlewares/authorization/authorization_token";
@@ -25,6 +26,14 @@ const MessengerRouter = (router = Router()) => {
     Authorization,
     getAllMessages
   );
+
+  router.post(
+    "/all-conversation/",
+    Authentication,
+    Authorization,
+    getAllConversations
+  );
+ 
 
   return router;
 };

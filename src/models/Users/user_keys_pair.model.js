@@ -60,10 +60,53 @@ class UserKeysPair {
       return null;
     }
   }
+  // Lấy cặp khoá
+  static async isHasKeysPairReceiver(receiver_id) {
+    try {
+      const createMessageQuery = `
+        SELECT public_key FROM UserKeysPair
+        WHERE 
+          (user_id = ?)
+      `;
+
+      const [result] = await db.execute(createMessageQuery, [receiver_id]);
+
+
+      if (result.length > 0) {
+        return result[0]?.public_key ? true : false;
+      }
+      return false;
+    } catch (error) {
+      console.error("Error creating message: ", error);
+      throw error;
+    }
+  }
+
+  static async getPublicKeyReceiver(receiver_id) {
+    try {
+      const createMessageQuery = `
+        SELECT public_key FROM UserKeysPair
+        WHERE 
+          (user_id = ?)
+      `;
+
+      const [result] = await db.execute(createMessageQuery, [receiver_id]);
+
+      if (result.length > 0) {
+        return {
+          public_key: result[0]?.public_key,
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error("Error creating message: ", error);
+      throw error;
+    }
+  }
+
 
 
   //Xoá cặp khoá
-  // Lấy cặp khoá
   static async deleteKeysPair(user_id) {
     try {
       const deleteUserQuery = "DELETE FROM UserKeysPair WHERE user_id = ?;";

@@ -27,7 +27,6 @@ const createMessage = async (req, res) => {
         .json({ status: false, message: "Dữ liệu nhập vào không hợp lệ" });
     }
 
-
     // Create a new message instance
     const newMessage = new Message({
       sender_id: user_id,
@@ -51,6 +50,10 @@ const createMessage = async (req, res) => {
         name_file: name_file,
         reply_text: reply_text,
       });
+      // Update conversation status for both users
+      io.to(getSocketIdByUserId(friend_id, users)).emit("updateConversation");
+      io.to(getSocketIdByUserId(user_id, users)).emit("updateConversation");
+
       return res.status(201).json({ status: true });
     } else {
       return res
@@ -73,9 +76,7 @@ const getAllMessages = async (req, res) => {
     const private_key = req.body?.private_key ?? "";
 
     if (!user_id || !friend_id || !private_key) {
-      return res
-        .status(400)
-        .json({ status: false });
+      return res.status(400).json({ status: false });
     }
 
     const result = await Message.getMessage(user_id, friend_id);
@@ -119,4 +120,58 @@ const getAllMessages = async (req, res) => {
   }
 };
 
-export { getAllMessages, createMessage };
+const getAllConversations = async (req, res) => {
+  try {
+    const user_id = req.body?.data?.user_id ?? null;
+    const private_key = req.body?.private_key ?? "";
+    if (!user_id) {
+      return res
+        .status(400)
+        .json({ status: false, message: "User ID is required" });
+    }
+
+    const conversations = await Message.getConversation(user_id);
+
+    // Giải mã các tin nhắn để lấy nội dung hiển thị
+    const conversationsWithDecryptedMessages = await Promise.all(
+      conversations?.map(async (conv) => {
+        let content_text = "Encrypted message";
+
+        // Giải mã tin nhắn cuối cùng của bạn bè
+        if (conv.sender_id === user_id) {
+          content_text = decryptWithPrivateKey(
+            conv.content_text_encrypt_by_owner,
+            private_key
+          );
+        } else {
+          content_text = decryptWithPrivateKey(
+            conv.content_text_encrypt,
+            private_key
+          );
+        }
+
+        return {
+          friend_id: conv.friend_id,
+          friend_name: conv.friend_name,
+          friend_avatar: conv.friend_avatar,
+          last_message: content_text,
+          last_message_time: conv.last_message_time,
+          sender_id: conv.sender_id,
+          receiver_id: conv.receiver_id,
+        };
+      })
+    );
+
+    return res
+      .status(200)
+      .json({ status: 200, data: conversationsWithDecryptedMessages });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: "An error occurred, please try again later",
+    });
+  }
+};
+
+export { getAllMessages, createMessage, getAllConversations };
