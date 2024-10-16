@@ -106,11 +106,13 @@ class Message {
                                     u.user_id AS friend_id,
                                     u.user_name AS friend_name,
                                     pm.media_link AS friend_avatar,
+                                    
                                     msg.content_text_encrypt,
                                     msg.content_text_encrypt_by_owner,
                                     msg.created_at AS last_message_time,
                                     msg.sender_id,
-                                    msg.receiver_id
+                                    msg.receiver_id,
+                                    msg.content_type
                                   FROM (
                                     SELECT 
                                       *

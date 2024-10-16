@@ -95,7 +95,6 @@ const checkKeysPairReceiver = async (req, res) => {
         receiver_id
       );
       if (isHasKeysPairReceiver) {
-        console.log(">>>>>>>>>>>>>>>>>:", isHasKeysPairReceiver);
         return res.status(200).json({ status: true });
       } else {
         return res.status(200).json({ status: false });

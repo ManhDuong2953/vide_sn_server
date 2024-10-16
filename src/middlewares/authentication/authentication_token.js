@@ -25,7 +25,6 @@ export default async function Authentication(req, res, next) {
 
     const { user_email, user_password, user_id_login, user_id_encode, type_account } =
       req.body;
-    console.log({ user_email, user_password, user_id_login, user_id_encode, type_account });
 
     //login với email và password
     if (user_email && user_password) {

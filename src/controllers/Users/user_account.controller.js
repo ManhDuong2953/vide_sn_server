@@ -80,7 +80,6 @@ const createUsersBySocialAccount = async (req, res) => {
             throw new Error(usersResponse);
         }
     } catch (error) {
-        console.log(error);
         res.status(400).json({ status: false, message: error.message ?? error });
     }
 };
@@ -96,7 +95,6 @@ const loginUser = async (req, res) => {
             res.status(401).json({ status: false, message: 'Email hoặc mật khẩu không hợp lệ' });
         }
     } catch (error) {
-        console.log(error);
         res.status(500).json({ status: false, message: error.message ?? error });
     }
 };

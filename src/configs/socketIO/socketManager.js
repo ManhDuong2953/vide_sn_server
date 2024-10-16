@@ -20,9 +20,7 @@ const initializeSocket = (httpServer, users) => {
       // Lưu socket ID của người dùng
       socket.on("registerUser", (data) => {
         addUser(socket.id, data?.user_id, users);
-        console.log(
-          `${data?.user_id} has connected with socket ID: ${socket.id}`
-        );
+
         // Gửi danh sách online hiện tại cho tất cả người dùng
         io.emit("onlineUsers", getAllOnlineUsers(users));
       });
@@ -53,10 +51,14 @@ const initializeSocket = (httpServer, users) => {
       // Chấp nhận cuộc gọi
       socket.on("acceptCallUser", (data) => {
         const senderSocketId = getSocketIdByUserId(data?.sender_id, users);
-        if (senderSocketId) {
-          io.to(senderSocketId).emit("statusAcceptedCallUser", {
-            status: data?.status,
-          });
+        const receiverSocketId = getSocketIdByUserId(data?.receiver_id, users);
+        if (senderSocketId && receiverSocketId) {
+          io.to([receiverSocketId, senderSocketId]).emit(
+            "statusAcceptedCallUser",
+            {
+              status: data?.status,
+            }
+          );
         } else {
           console.error(`No socket found for user ID: ${data?.sender_id}`);
         }
@@ -72,9 +74,22 @@ const initializeSocket = (httpServer, users) => {
         );
       });
 
+      //T  cuộc gọi
+      socket.on("statusCall", (data) => {
+        const receiverSocketId = getSocketIdByUserId(data?.to, users);
+        if (receiverSocketId) {
+          io.to(receiverSocketId).emit("statusCallToUser", {
+            isCallRemoteAccepted: data.isCallAccepted,
+            isVideoRemoteMuted: data?.isVideoMuted,
+            isAudioRemoteMuted: data?.isAudioMuted,
+          });
+        } else {
+          console.error(`No socket found for user ID: ${data?.sender_id}`);
+        }
+      });
+
       // Khi client ngắt kết nối
       socket.on("disconnect", () => {
-        console.log("User disconnected:", socket.id);
         removeUser(socket.id, users);
         // Cập nhật danh sách online cho tất cả người dùng
         io.emit("onlineUsers", getAllOnlineUsers(users));

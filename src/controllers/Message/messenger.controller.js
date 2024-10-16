@@ -9,10 +9,11 @@ const createMessage = async (req, res) => {
     const files = req.files || {};
     const user_id = req.body?.data?.user_id ?? null;
     const friend_id = req.params?.id ?? null;
-    let content_text = req.body?.content_text ?? "";
+    let content_text = (req.body?.content_text).toString() ?? "";
     const content_type = req.body?.content_type ?? "";
     const reply_text = req.body?.reply_text ?? null;
     let name_file = req.body?.name_file ?? "";
+    console.log(user_id, friend_id, content_text, content_type);
 
     if (files.length > 0) {
       content_text = (
@@ -98,7 +99,7 @@ const getAllMessages = async (req, res) => {
         }
 
         return {
-          message_id: item.id,
+          messenger_id: item.messenger_id,
           sender_id: item.sender_id,
           receiver_id: item.receiver_id,
           content_text,
@@ -154,10 +155,11 @@ const getAllConversations = async (req, res) => {
           friend_id: conv.friend_id,
           friend_name: conv.friend_name,
           friend_avatar: conv.friend_avatar,
-          last_message: content_text,
+          content_text: content_text,
           last_message_time: conv.last_message_time,
           sender_id: conv.sender_id,
           receiver_id: conv.receiver_id,
+          content_type: conv.content_type,
         };
       })
     );
