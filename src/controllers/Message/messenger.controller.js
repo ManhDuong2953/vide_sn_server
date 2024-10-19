@@ -7,7 +7,7 @@ require("dotenv").config();
 const createMessage = async (req, res) => {
   try {
     const files = req.files || {};
-    const user_id = req.body?.data?.user_id ?? null;
+    const user_id = (req.body?.sender_id || req.body?.data?.user_id )?? null;
     const friend_id = req.params?.id ?? null;
     let content_text = (req.body?.content_text).toString() ?? "";
     const content_type = req.body?.content_type ?? "";
