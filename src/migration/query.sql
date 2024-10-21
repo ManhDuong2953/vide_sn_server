@@ -219,10 +219,11 @@ CREATE TABLE
         content_text_encrypt_by_owner TEXT,
         content_type VARCHAR(255) DEFAULT 'text',
         name_file varchar(1000) DEFAULT NULL,
-        reply_text TEXT DEFAULT NULL,
+        reply_messenger_id INT DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (sender_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (receiver_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (receiver_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (reply_messenger_id) REFERENCES PrivateMessage (messenger_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE
