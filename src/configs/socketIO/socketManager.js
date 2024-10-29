@@ -1,4 +1,5 @@
 import { Server } from "socket.io"; // Đảm bảo import đúng Server từ socket.io
+import db from "../database/database.config";
 require("dotenv").config();
 
 let io; // Biến để lưu instance của socket.io
@@ -25,6 +26,11 @@ const initializeSocket = (httpServer, users) => {
         io.emit("onlineUsers", getAllOnlineUsers(users));
       });
 
+      socket.on("dark_theme", async (data) => {
+        const darkThemeQuery =
+          "UPDATE UserSetting SET dark_theme = ? WHERE user_id = ?";
+        await db.execute(darkThemeQuery, [data?.dark_theme, data?.user_id]);
+      });
       // Lắng nghe sự kiện đang viết tin nhắn
       socket.on("senderWritting", (data) => {
         const receiverSocketId = getSocketIdByUserId(data?.receiver_id, users);

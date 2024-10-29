@@ -181,7 +181,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    GroupChanel (
+    GroupChannel (
         group_id VARCHAR(255) PRIMARY KEY,
         group_name VARCHAR(255) NOT NULL,
         group_privacy INT DEFAULT 1,
@@ -194,20 +194,24 @@ CREATE TABLE
 CREATE TABLE
     GroupMember (
         member_id VARCHAR(255) NOT NULL,
+        group_id VARCHAR(255) NOT NULL,
         member_status INT DEFAULT 0,
         member_role INT DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (member_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (member_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (group_id) REFERENCES GroupChannel (group_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE
     GroupPost (
         group_post_id VARCHAR(255) PRIMARY KEY,
+        group_id VARCHAR(255) NOT NULL,
         post_id VARCHAR(255) NOT NULL,
         member_id VARCHAR(255) NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (post_id) REFERENCES Post (post_id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (member_id) REFERENCES GroupMember (member_id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (member_id) REFERENCES GroupMember (member_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (group_id) REFERENCES GroupChannel (group_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE
@@ -235,7 +239,7 @@ CREATE TABLE
         content_type VARCHAR(255) DEFAULT 'text',
         reply_text TEXT DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (group_id) REFERENCES GroupChanel (group_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (group_id) REFERENCES GroupChannel (group_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (sender_id) REFERENCES GroupMember (member_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 

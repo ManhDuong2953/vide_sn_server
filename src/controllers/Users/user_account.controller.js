@@ -15,18 +15,18 @@ const createUsers = async (req, res) => {
                 media_type: 'avatar',
                 media_link:
                     data.user_gender === "male" ?
-                        'https://res-console.cloudinary.com/der2ygna3/media_explorer_thumbnails/3e8fb1c77962f123ba4ae61243fef222/detailed'
+                        'https://res.cloudinary.com/der2ygna3/image/upload/v1730082664/users/avatar/knji2r1nic8gvzm371hn.jpg'
                         : (
                             data.user_gender = 'female' ?
-                                'https://res-console.cloudinary.com/der2ygna3/media_explorer_thumbnails/a754ebd3ae756eda6ee40a19ac36b74a/detailed'
+                                'https://res.cloudinary.com/der2ygna3/image/upload/v1730082728/users/avatar/lwzxbad64rsmvnx7xocs.jpg'
                                 :
-                                'https://preview.redd.it/h0xx7n4r3zs41.png?auto=webp&s=fe63675e95a48b3c9867cd876190989654e66228'
+                                'https://res.cloudinary.com/der2ygna3/image/upload/v1730082743/users/avatar/yn8p6j26gmfdcp70ngrz.jpg'
                         )
             }).create();
             new ProfileMedia({
                 user_id: user_id,
                 media_type: 'cover',
-                media_link: 'https://res-console.cloudinary.com/der2ygna3/media_explorer_thumbnails/0383e0bb9a4df2d70d94b18c64b34c56/detailed'
+                media_link: 'https://res.cloudinary.com/der2ygna3/image/upload/v1730082713/users/cover/mzj5tslenqew6qdcpime.jpg'
             }).create();
 
             new UserProfile({
@@ -65,7 +65,7 @@ const createUsersBySocialAccount = async (req, res) => {
             new ProfileMedia({
                 user_id: user_id,
                 media_type: 'cover',
-                media_link: 'https://res-console.cloudinary.com/der2ygna3/media_explorer_thumbnails/0383e0bb9a4df2d70d94b18c64b34c56/detailed'
+                media_link: 'https://res.cloudinary.com/der2ygna3/image/upload/v1730082713/users/cover/mzj5tslenqew6qdcpime.jpg'
             }).create();
             new UserProfile({
                 user_id,
