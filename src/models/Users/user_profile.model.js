@@ -4,9 +4,9 @@ class UserProfile {
     constructor(data) {
         this.user_id = data.user_id;
         this.date_of_birth = data.date_of_birth;
-        this.user_address = data.user_address || null;
-        this.user_school = data.user_school || null;
-        this.user_slogan = data.user_slogan || null;
+        this.user_address = data.user_address;
+        this.user_school = data.user_school;
+        this.user_slogan = data.user_slogan;
     }
     
 

@@ -3,6 +3,7 @@ import express from "express";
 import {
   createHeartStory,
   createStory,
+  deleteStory,
   fetchUserStories,
   listStory,
   storyById,
@@ -26,6 +27,7 @@ export default function StoryRouter() {
   router.get("/list-story", Authentication, Authorization, listStory);
   router.get("/story-by-id/:id", Authentication, Authorization, storyById);
   router.get("/stories-by-id/:id", Authentication, Authorization, fetchUserStories);
+  router.delete("/delete-story/:id", Authentication, Authorization, deleteStory);
   router.post(
     "/create-heart-story/:id",
     Authentication,

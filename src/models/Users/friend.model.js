@@ -1,4 +1,5 @@
 import db from "../../configs/database/database.config";
+import { ProfileMedia } from "./profile_media.model";
 
 class Friend {
   constructor(data) {
@@ -53,24 +54,34 @@ class Friend {
         SELECT 
           u.user_id AS friend_id,
           u.user_name,
-          u.user_nickname,
-          pm.media_link AS avatar_link
+          u.user_nickname
         FROM Friend f
         JOIN User u 
           ON (u.user_id = f.requestor_id AND f.receiver_id = ?)
           OR (u.user_id = f.receiver_id AND f.requestor_id = ?)
-        JOIN ProfileMedia pm
-          ON pm.user_id = u.user_id
-        WHERE pm.media_type = 'avatar'
-          AND f.relationship_status = 1
-        ORDER BY pm.created_at
+        WHERE 
+          f.relationship_status = 1
       `;
-
+  
       const [result] = await db.execute(getFriendsQuery, [user_id, user_id]);
-
+  
+      if (result.length > 0) {
+        // Sử dụng Promise.all để chờ tất cả các lời gọi bất đồng bộ hoàn thành
+        const friendsWithAvatar = await Promise.all(
+          result.map(async (row) => {
+            const avatarLink = await ProfileMedia.getLatestAvatarById(row.friend_id);
+            return {
+              ...row,
+              avatar: avatarLink, // Thêm thuộc tính avatar
+            };
+          })
+        );
+        return friendsWithAvatar;
+      }
       return result;
     } catch (error) {
-      return error;
+      console.error("Error fetching friends:", error);
+      throw error;
     }
   }
 

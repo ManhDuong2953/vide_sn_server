@@ -43,21 +43,28 @@ class Story {
       .slice(0, 19)
       .replace("T", " ");
 
-    const [listFriends] = await Friend.getFriends(user_id);
-    console.log(listFriends);
+    // Lấy danh sách bạn bè
+    const listFriends = await Friend.getFriends(user_id);
+    const friendIds = listFriends.map((friend) => friend.friend_id); // Lấy friend_id của bạn bè
 
+    // Chuyển đổi mảng friendIds thành chuỗi câu hỏi (?, ?, ...) để sử dụng trong SQL
+    const friendsPlaceholder = friendIds.map(() => "?").join(", ");
+
+    // Truy vấn SQL để lấy tin của bạn bè và của chính người dùng
     const query = `
-      SELECT * FROM story 
-      WHERE (story_privacy = 1 AND created_at >= ?)
-         OR (user_id = ? AND created_at >= ?)
-      ORDER BY created_at DESC;
-    `;
+    SELECT * FROM story 
+    WHERE (((user_id IN (${friendsPlaceholder})) 
+      AND created_at >= ? 
+      AND story_privacy = 1))
+      OR user_id = ? 
+    ORDER BY created_at DESC;
+  `;
 
     try {
       const [results] = await db.execute(query, [
+        ...friendIds, // Spread friendIds vào các vị trí ? trong câu truy vấn
         formattedDate,
-        user_id,
-        formattedDate,
+        user_id, // Tin của chính người dùng
       ]);
       return results;
     } catch (error) {
@@ -101,14 +108,14 @@ class Story {
     }
   }
 
-  static async deleteStory(story_id) {
+  static async deleteStory(story_id, user_id) {
     const query = `
       DELETE FROM story
-      WHERE story_id =?;
+      WHERE story_id =? AND user_id =?;
     `;
 
     try {
-      const [result] = await db.execute(query, [story_id]);
+      const [result] = await db.execute(query, [story_id, user_id]);
 
       if (result.affectedRows > 0) {
         return true;

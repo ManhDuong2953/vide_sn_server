@@ -56,7 +56,7 @@ const listStory = async (req, res) => {
     const storiesWithUserInfo = await Promise.all(
       stories.map(async (story) => {
         const profileUser = await Users.getById(story.user_id);
-        const user_avatar = await ProfileMedia.getLatestAvatarById(
+        const avatar = await ProfileMedia.getLatestAvatarById(
           story.user_id
         ); // Gọi hàm để lấy avatar mới nhất
 
@@ -67,7 +67,7 @@ const listStory = async (req, res) => {
           created_at: story.created_at,
           user_id: story.user_id,
           user_name: profileUser.user_name, // Tên người dùng
-          user_avatar: user_avatar, // Avatar của người dùng
+          avatar: avatar, // Avatar của người dùng
           story_privacy: story.story_privacy,
         };
       })
@@ -110,7 +110,7 @@ const storyById = async (req, res) => {
 
     // Lấy thông tin người dùng và avatar liên quan đến story
     const profileUser = await Users.getById(user_id);
-    const user_avatar = await ProfileMedia.getLatestAvatarById(user_id);
+    const avatar = await ProfileMedia.getLatestAvatarById(user_id);
     const storyWithUserInfo = {
       story_id: story.story_id,
       media_link: story.media_link,
@@ -119,7 +119,7 @@ const storyById = async (req, res) => {
       heart_quantity: story.heart_quantity,
       user_id: story.user_id,
       user_name: profileUser?.user_name || "Unknown",
-      user_avatar: user_avatar || null,
+      avatar: avatar || null,
       story_privacy: story.story_privacy,
     };
 
@@ -161,7 +161,7 @@ async function fetchUserStories(req, res) {
     // Lặp qua từng story để lấy thông tin người dùng và avatar
     const storiesWithUserInfo = await Promise.all(stories.map(async (story) => {
       const profileUser = await Users.getById(story.user_id);
-      const user_avatar = await ProfileMedia.getLatestAvatarById(story.user_id);
+      const avatar = await ProfileMedia.getLatestAvatarById(story.user_id);
       
       return {
         story_id: story.story_id,
@@ -171,7 +171,7 @@ async function fetchUserStories(req, res) {
         heart_quantity: story.heart_quantity,
         user_id: story.user_id,
         user_name: profileUser?.user_name || "Unknown",
-        user_avatar: user_avatar || null,
+        avatar: avatar || null,
         story_privacy: story.story_privacy,
       };
     }));
@@ -204,4 +204,28 @@ const createHeartStory = async (req, res) => {
     });
   }
 };
-export { createStory, listStory, storyById, createHeartStory,fetchUserStories };
+
+
+
+// Xoá
+const deleteStory = async (req, res) => {
+  try {
+    const story_id = req.params.id;
+    const user_id = req.body?.data?.user_id;
+    const isDeleted = await Story.deleteStory(story_id, user_id);
+    if (!isDeleted) {
+      return res.status(403).json({
+        status: false,
+        message: "Bạn không có quyền xoá tin này",
+      });
+    }
+    res.status(200).json({ status: true });
+  } catch (error) {
+    console.error("Lỗi khi tạo bài viết:", error);
+    res.status(500).json({
+      status: false,
+      message: "Đã xảy ra lỗi, vui lòng thử lại sau",
+    });
+  }
+};
+export { createStory, listStory, storyById, createHeartStory,fetchUserStories, deleteStory };
