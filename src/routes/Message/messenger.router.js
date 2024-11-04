@@ -1,6 +1,9 @@
 import { Router } from "express";
 import {
   createMessage,
+  deleteAllMessenger,
+  deleteMessenger,
+  deleteMessengerByOwnerSide,
   getAllConversations,
   getAllMessages,
 } from "../../controllers/Message/messenger.controller";
@@ -33,7 +36,27 @@ const MessengerRouter = (router = Router()) => {
     Authorization,
     getAllConversations
   );
- 
+
+  router.delete(
+    "/delete-all-messenger/:friend_id",
+    Authentication,
+    Authorization,
+    deleteAllMessenger
+  );
+
+  router.delete(
+    "/delete-messenger/:messenger_id",
+    Authentication,
+    Authorization,
+    deleteMessenger
+  );
+
+  router.delete(
+    "/delete-messenger-by-owner-side/:messenger_id",
+    Authentication,
+    Authorization,
+    deleteMessengerByOwnerSide
+  );
 
   return router;
 };

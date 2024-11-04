@@ -7,13 +7,12 @@ require("dotenv").config();
 const createMessage = async (req, res) => {
   try {
     const files = req.files || {};
-    const user_id = (req.body?.sender_id || req.body?.data?.user_id )?? null;
+    const user_id = (req.body?.sender_id || req.body?.data?.user_id) ?? null;
     const friend_id = req.params?.id ?? null;
     let content_text = (req.body?.content_text).toString() ?? "";
     const content_type = req.body?.content_type ?? "";
-    const reply_text = req.body?.reply_text ?? null;
+    const reply_messenger_id = req.body?.reply_messenger_id ?? null;
     let name_file = req.body?.name_file ?? "";
-    console.log(user_id, friend_id, content_text, content_type);
 
     if (files.length > 0) {
       content_text = (
@@ -33,23 +32,25 @@ const createMessage = async (req, res) => {
       sender_id: user_id,
       receiver_id: friend_id,
       content_type: content_type,
-      reply_text: reply_text,
+      reply_messenger_id: reply_messenger_id,
       name_file: name_file,
     });
 
     // Attempt to create the message in the database
     const result = await newMessage.create(content_text);
 
-    // Respond based on the result of the message creation
     if (result) {
+      const sender_id = getSocketIdByUserId(user_id, users);
+      const receiver_id = getSocketIdByUserId(friend_id, users);
       // Send message to receiver regardless of database result
-      io.to(getSocketIdByUserId(friend_id, users)).emit("receiveMessage", {
+      io.to([sender_id, receiver_id]).emit("receiveMessage", {
+        messenger_id: result,
         sender_id: user_id,
         receiver_id: friend_id,
         content_text: content_text,
         content_type: content_type,
         name_file: name_file,
-        reply_text: reply_text,
+        reply_messenger_id: reply_messenger_id,
       });
       // Update conversation status for both users
       io.to(getSocketIdByUserId(friend_id, users)).emit("updateConversation");
@@ -65,7 +66,7 @@ const createMessage = async (req, res) => {
     console.error(error.message);
     return res.status(500).json({
       status: false,
-      message: "An error occurred, please try again later",
+      message: "Opps! Có một chút lỗi nhỏ. Thử lại tác vụ",
     });
   }
 };
@@ -106,7 +107,7 @@ const getAllMessages = async (req, res) => {
           name_file: item.name_file,
           content_type: item.content_type,
           created_at: item.created_at,
-          reply_text: item.reply_text,
+          reply_messenger_id: item.reply_messenger_id,
         };
       })
     );
@@ -116,7 +117,7 @@ const getAllMessages = async (req, res) => {
     console.error(error);
     return res.status(500).json({
       status: false,
-      message: "An error occurred, please try again later",
+      message: "Opps! Có một chút lỗi nhỏ. Thử lại tác vụ",
     });
   }
 };
@@ -171,9 +172,115 @@ const getAllConversations = async (req, res) => {
     console.error(error);
     return res.status(500).json({
       status: false,
-      message: "An error occurred, please try again later",
+      message: "Opps! Có một chút lỗi nhỏ. Thử lại tác vụ",
     });
   }
 };
 
-export { getAllMessages, createMessage, getAllConversations };
+const deleteAllMessenger = async (req, res) => {
+  try {
+    const user_id = req.body?.data?.user_id;
+    const friend_id = req.params?.friend_id;
+    if (!user_id || !friend_id) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Người dùng không tồn tại" });
+    }
+
+    const result = await Message.deleteAllMessage(user_id, friend_id);
+    if (result <= 0) {
+      throw new Error("Lỗi");
+    }
+
+    return res.status(200).json({ status: 200 });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: "Opps! Có một chút lỗi nhỏ. Thử lại tác vụ",
+    });
+  }
+};
+// Hàm deleteMessenger trong controller
+const deleteMessenger = async (req, res) => {
+  try {
+    const user_id = req.body?.data?.user_id;
+    const messenger_id = req.params?.messenger_id;
+    if (!user_id) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Người dùng không tồn tại" });
+    }
+
+    const result = await Message.deleteMessageByMessageID(
+      user_id,
+      messenger_id
+    );
+    
+    if (!result) {
+      return res
+        .status(404)
+        .json({
+          status: false,
+          message: "Không tìm thấy hoặc không thể xóa tin nhắn",
+        });
+    }
+
+    return res
+      .status(200)
+      .json({ status: true});
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: "Opps! Có một chút lỗi nhỏ. Thử lại tác vụ",
+    });
+  }
+};
+
+// Hàm deleteMessengerByOwnerSide trong controller
+const deleteMessengerByOwnerSide = async (req, res) => {
+  console.log(123);
+  
+  try {
+    const user_id = req.body?.data?.user_id;
+    const messenger_id = req.params?.messenger_id;
+    if (!user_id) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Người dùng không tồn tại" });
+    }
+
+    const result = await Message.deleteMessageByMessageIDOwnSide(
+      user_id,
+      messenger_id
+    );
+    if (!result) {
+      return res
+        .status(404)
+        .json({
+          status: false,
+          message: "Không tìm thấy hoặc không thể xóa tin nhắn",
+        });
+    }
+
+    return res
+      .status(200)
+      .json({ status: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: "Opps! Có một chút lỗi nhỏ. Thử lại tác vụ",
+    });
+  }
+};
+
+export {
+  getAllMessages,
+  createMessage,
+  getAllConversations,
+  deleteAllMessenger,
+  deleteMessenger,
+  deleteMessengerByOwnerSide,
+};

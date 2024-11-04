@@ -89,6 +89,7 @@ CREATE TABLE
         story_id VARCHAR(255) PRIMARY KEY,
         user_id VARCHAR(255) NOT NULL,
         media_link VARCHAR(1000) NOT NULL,
+        audio_link VARCHAR(1000) DEFAULT NULL,
         story_privacy INT DEFAULT 1,
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         heart_quantity INT DEFAULT 0,
@@ -232,15 +233,17 @@ CREATE TABLE
 
 CREATE TABLE
     GroupMessage (
-        group_id VARCHAR(255) NOT NULL PRIMARY KEY,
+        messenger_id VARCHAR(255) NOT NULL PRIMARY KEY,
+        group_id VARCHAR(255) NOT NULL,
         sender_id VARCHAR(255) NOT NULL,
         content_text TEXT,
         media_link VARCHAR(1000),
         content_type VARCHAR(255) DEFAULT 'text',
-        reply_text TEXT DEFAULT NULL,
+        reply_messenger_id VARCHAR(255) DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (group_id) REFERENCES GroupChannel (group_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (sender_id) REFERENCES GroupMember (member_id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (reply_messenger_id) REFERENCES GroupMessage (messenger_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE
