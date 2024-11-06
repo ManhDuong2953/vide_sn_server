@@ -10,7 +10,7 @@ const createStory = async (req, res) => {
     const fileAudio = req.files.audio ? req.files.audio[0] : null;
 
     const user_id = req.body?.data?.user_id;
-    const { story_privacy } = req.body; 
+    const { story_privacy } = req.body;
     if (!user_id || !story_privacy || !fileImage) {
       throw new Error("Thiếu thông tin");
     }
@@ -31,12 +31,10 @@ const createStory = async (req, res) => {
     if (result) {
       res.status(200).json({ status: true, message: "Đăng tin thành công!" });
     } else {
-      res
-        .status(404)
-        .json({
-          status: false,
-          message: "Đã xảy ra lỗi, vui lòng thử lại sau",
-        });
+      res.status(404).json({
+        status: false,
+        message: "Đã xảy ra lỗi, vui lòng thử lại sau",
+      });
     }
   } catch (error) {
     console.error("Lỗi khi tạo bài viết:", error);
@@ -56,9 +54,7 @@ const listStory = async (req, res) => {
     const storiesWithUserInfo = await Promise.all(
       stories.map(async (story) => {
         const profileUser = await Users.getById(story.user_id);
-        const avatar = await ProfileMedia.getLatestAvatarById(
-          story.user_id
-        ); // Gọi hàm để lấy avatar mới nhất
+        const avatar = await ProfileMedia.getLatestAvatarById(story.user_id); // Gọi hàm để lấy avatar mới nhất
 
         return {
           story_id: story.story_id,
@@ -89,6 +85,7 @@ const listStory = async (req, res) => {
 const storyById = async (req, res) => {
   try {
     const story_id = req.params.id; // Lấy ID story từ params
+
     const story = await Story.getStoryById(story_id);
 
     if (!story) {
@@ -138,7 +135,9 @@ const storyById = async (req, res) => {
 
 async function fetchUserStories(req, res) {
   const { id } = req.params; // Lấy user_id từ params
+  const user_id = req.body?.data?.user_id;
 
+  
   try {
     const storyItem = await Story.getStoryById(id);
     if (!storyItem) {
@@ -148,7 +147,7 @@ async function fetchUserStories(req, res) {
       });
     }
     // Lấy các story của người dùng
-    const stories = await Story.getStoriesByUserId(storyItem?.user_id);
+    const stories = await Story.getStoriesByUserId(storyItem?.user_id, user_id);
 
     // Nếu không có story nào
     if (!stories.length) {
@@ -159,22 +158,24 @@ async function fetchUserStories(req, res) {
     }
 
     // Lặp qua từng story để lấy thông tin người dùng và avatar
-    const storiesWithUserInfo = await Promise.all(stories.map(async (story) => {
-      const profileUser = await Users.getById(story.user_id);
-      const avatar = await ProfileMedia.getLatestAvatarById(story.user_id);
-      
-      return {
-        story_id: story.story_id,
-        media_link: story.media_link,
-        audio_link: story.audio_link,
-        created_at: story.created_at,
-        heart_quantity: story.heart_quantity,
-        user_id: story.user_id,
-        user_name: profileUser?.user_name || "Unknown",
-        avatar: avatar || null,
-        story_privacy: story.story_privacy,
-      };
-    }));
+    const storiesWithUserInfo = await Promise.all(
+      stories.map(async (story) => {
+        const profileUser = await Users.getById(story.user_id);
+        const avatar = await ProfileMedia.getLatestAvatarById(story.user_id);
+
+        return {
+          story_id: story.story_id,
+          media_link: story.media_link,
+          audio_link: story.audio_link,
+          created_at: story.created_at,
+          heart_quantity: story.heart_quantity,
+          user_id: story.user_id,
+          user_name: profileUser?.user_name || "Unknown",
+          avatar: avatar || null,
+          story_privacy: story.story_privacy,
+        };
+      })
+    );
 
     res.status(200).json({
       status: true,
@@ -205,8 +206,6 @@ const createHeartStory = async (req, res) => {
   }
 };
 
-
-
 // Xoá
 const deleteStory = async (req, res) => {
   try {
@@ -228,4 +227,11 @@ const deleteStory = async (req, res) => {
     });
   }
 };
-export { createStory, listStory, storyById, createHeartStory,fetchUserStories, deleteStory };
+export {
+  createStory,
+  listStory,
+  storyById,
+  createHeartStory,
+  fetchUserStories,
+  deleteStory,
+};

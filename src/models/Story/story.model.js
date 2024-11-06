@@ -18,6 +18,7 @@ class Story {
         INSERT INTO story (story_id, user_id, media_link, audio_link,  story_privacy)
         VALUES (?, ?, ?, ?, ?);
       `;
+
       const [result] = await db.execute(createstoryRequestQuery, [
         story_id,
         this.user_id,
@@ -37,11 +38,14 @@ class Story {
   }
 
   static async getAllStory(user_id) {
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const twentyFourHoursAgo = new Date(
+      new Date().getTime() - 16 * 60 * 60 * 1000
+    );
     const formattedDate = twentyFourHoursAgo
       .toISOString()
       .slice(0, 19)
-      .replace("T", " ");
+      .replace("T", " ")
+      .trim();
 
     // Lấy danh sách bạn bè
     const listFriends = await Friend.getFriends(user_id);
@@ -52,13 +56,13 @@ class Story {
 
     // Truy vấn SQL để lấy tin của bạn bè và của chính người dùng
     const query = `
-    SELECT * FROM story 
-    WHERE (((user_id IN (${friendsPlaceholder})) 
-      AND created_at >= ? 
-      AND story_privacy = 1))
-      OR user_id = ? 
-    ORDER BY created_at DESC;
-  `;
+                    SELECT * FROM story 
+                    WHERE (((user_id IN (${friendsPlaceholder})) 
+                      AND created_at >= ? 
+                      AND story_privacy = 1))
+                      OR user_id = ? 
+                    ORDER BY created_at DESC;
+                  `;
 
     try {
       const [results] = await db.execute(query, [
@@ -73,9 +77,7 @@ class Story {
     }
   }
   static async getStoryById(id_story) {
-    const query = `
-      SELECT * FROM story where story_id = ?
-    `;
+    const query = `SELECT * FROM story WHERE (story_id = ?)`;
     try {
       const [results] = await db.execute(query, [id_story]);
       return results[0];
@@ -85,22 +87,28 @@ class Story {
     }
   }
 
-  // Lấy tất cả story của user_id trong vòng 24 giờ
-  static async getStoriesByUserId(user_id) {
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  static async getStoriesByUserId(user_id, my_id) {
+    const twentyFourHoursAgo = new Date(
+      new Date().getTime() - 24 * 60 * 60 * 1000
+    );
     const formattedDate = twentyFourHoursAgo
       .toISOString()
       .slice(0, 19)
       .replace("T", " ");
 
     const query = `
-    SELECT * FROM story 
-    WHERE user_id = ? AND created_at >= ?
-    ORDER BY created_at DESC;
-  `;
+      SELECT * FROM story 
+      WHERE user_id = ? 
+        AND created_at >= ?
+        AND (user_id = ? OR story_privacy = 1)
+      ORDER BY created_at DESC`;
 
     try {
-      const [results] = await db.execute(query, [user_id, formattedDate]);
+      const [results] = await db.execute(query, [
+        user_id,
+        formattedDate,
+        my_id,
+      ]);
       return results;
     } catch (error) {
       console.error("Error fetching user stories:", error);

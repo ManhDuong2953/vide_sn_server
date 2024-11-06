@@ -15,6 +15,7 @@ import FriendRouter from "./friend.router";
 import FriendBlockRouter from "./friend_block.router";
 import ProfileHeartRouter from "./profile_heart.router";
 import UserKeysPairRouter from "./user_keys_pair.router";
+import ProfileMediaRouter from "./profile_media.router";
 // Cấu hình Multer để xử lý nhiều trường ảnh
 const storage = multer.memoryStorage(); // Bạn có thể thay đổi sang multer.diskStorage() nếu cần
 const upload = multer({ storage });
@@ -49,6 +50,7 @@ const UserRouter = (router = Router()) => {
     uploadInfoProfileUser
   );
   router.use('/keys_pair', UserKeysPairRouter(express.Router()));
+  router.use('/profile-media', ProfileMediaRouter(express.Router()));
   
   return router;
 };
