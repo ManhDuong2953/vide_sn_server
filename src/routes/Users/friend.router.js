@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import Authentication from '../../middlewares/authentication/authentication_token';
 import { Authorization } from '../../middlewares/authorization/authorization_token';
-import { acceptFriend, createFriendRequest, deleteFriend, getAllRequestorsByReceiverId, getFriends, statusFriend } from '../../controllers/Users/friend.controller';
+import { acceptFriend, createFriendRequest, deleteFriend, getAllRequestorsByReceiverId, getDobFriends, getFriends, getListSuggest, statusFriend } from '../../controllers/Users/friend.controller';
 
 // Cấu hình router
 const FriendRouter = (router = Router()) => {
@@ -18,10 +18,16 @@ const FriendRouter = (router = Router()) => {
     router.get('/list/:id', getFriends);
 
     // Lấy tất cả các yêu cầu kết bạn bởi ID của người nhận
-    router.post('/requests/list', Authentication, Authorization, getAllRequestorsByReceiverId);
+    router.get('/requests/list', Authentication, Authorization, getAllRequestorsByReceiverId);
 
     // Xóa bạn bè
     router.post('/delete', Authentication, Authorization, deleteFriend);
+
+    //Lấy danh sách bạn bè gợi ý
+    router.get('/list-suggest', Authentication, Authorization, getListSuggest);
+
+    //Lấy danh sách dob
+    router.get('/list-dob', Authentication, Authorization, getDobFriends);
 
     return router;
 };

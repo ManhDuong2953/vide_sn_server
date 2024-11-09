@@ -10,7 +10,7 @@ class GroupChannel {
     this.avatar_media_link = data.avatar_media_link;
     this.cover_media_link = data.cover_media_link;
     this.created_at = data.created_at;
-  }
+  };
 
   async create() {
     const group_id = generateId("grp_");

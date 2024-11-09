@@ -1,3 +1,6 @@
+import GroupMember from '../../models/Group/group_member.model';
+import convertFalsyValues from '../convertFalsy/convertFalsy';
+
 const jwt = require('jsonwebtoken');
 require("dotenv").config()
 
@@ -10,7 +13,7 @@ export async function Authorization(req, res, next) {
         }
         const dataUser = jwt.decode(access_token);
         
-        req.body = { ...req.body, status: 'validated', data: dataUser };
+        req.body = convertFalsyValues({ ...req.body, status: 'validated', data: dataUser });
         
         next();
 
@@ -20,20 +23,31 @@ export async function Authorization(req, res, next) {
 }
 
 
-export function Role(req, res, next, ...requiredRoles) {
+export const checkRoleGroup = (requiredRole) => async (req, res, next) => {
     try {
-        const { status, data } = req.body;
-        if (status !== 'validated') {
-            throw new Error("Lỗi truy cập");
-        }
-        const userRole = data.role.toLowerCase();
-        if (requiredRoles.includes(userRole)) {
-            next();
-        } else {
-            throw new Error("Không có quyền truy cập");
-        }
-
+      const groupId = req.params?.id;
+      const user_id = req.body?.body?.user_id;
+  
+      if (!groupId) {
+        return res
+          .status(400)
+          .json({ status: false, message: "Group này không tồn tại" });
+      }
+  
+      const roleMember = await GroupMember.checkRole(user_id, groupId);
+  
+      if (roleMember && roleMember.role === requiredRole) {
+        // Nếu vai trò hợp lệ, lưu vào `req` và tiếp tục đến handler tiếp theo
+        req.roleMember = roleMember;
+        return next();
+      }
+  
+      return res
+        .status(403)
+        .json({ status: false, message: "Không có quyền truy cập" });
     } catch (error) {
-        res.status(403).json({ status: false, message: error.message });
+      console.error(error);
+      return res.status(500).json({ status: false, message: error.message });
     }
-}
+  };
+  

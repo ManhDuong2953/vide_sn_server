@@ -5,6 +5,7 @@ import {
   createStory,
   deleteStory,
   fetchUserStories,
+  listMyStory,
   listStory,
   storyById,
 } from "../../controllers/Story/story.controller.js";
@@ -25,6 +26,7 @@ export default function StoryRouter() {
     createStory
   );
   router.get("/list-story", Authentication, Authorization, listStory);
+  router.get("/my-list-story/", Authentication, Authorization, listMyStory);
   router.get("/story-by-id/:id", Authentication, Authorization, storyById);
   router.get("/stories-by-id/:id", Authentication, Authorization, fetchUserStories);
   router.delete("/delete-story/:id", Authentication, Authorization, deleteStory);

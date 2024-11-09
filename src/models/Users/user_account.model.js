@@ -88,20 +88,20 @@ class Users {
 
       if (this.user_name) {
         updates.push(" user_name = ?");
-        params.push(this.user_name);
+        params.push(this.user_name ?? null);
       }
       if (this.user_nickname) {
         updates.push(" user_nickname = ?");
-        params.push(this.user_nickname);
+        params.push(this.user_nickname ?? null);
       }
       if (this.user_email) {
         updates.push(" user_email = ?");
-        params.push(this.user_email);
+        params.push(this.user_email ?? null);
       }
 
       if (this.user_gender) {
         updates.push(" user_gender = ?");
-        params.push(this.user_gender);
+        params.push(this.user_gender ?? null);
       }
 
       if (updates.length === 0) {
@@ -110,7 +110,8 @@ class Users {
 
       updateUserQuery += updates.join(",");
       updateUserQuery += " WHERE user_id = ?";
-      params.push(this.user_id);
+      params.push(this.user_id ?? null);
+
 
       const [result] = await db.execute(updateUserQuery, params);
       return result.affectedRows;

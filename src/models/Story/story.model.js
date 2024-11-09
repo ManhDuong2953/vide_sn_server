@@ -49,6 +49,8 @@ class Story {
 
     // Lấy danh sách bạn bè
     const listFriends = await Friend.getFriends(user_id);
+
+    if (listFriends?.length === 0) return;
     const friendIds = listFriends.map((friend) => friend.friend_id); // Lấy friend_id của bạn bè
 
     // Chuyển đổi mảng friendIds thành chuỗi câu hỏi (?, ?, ...) để sử dụng trong SQL
@@ -60,7 +62,7 @@ class Story {
                     WHERE (((user_id IN (${friendsPlaceholder})) 
                       AND created_at >= ? 
                       AND story_privacy = 1))
-                      OR user_id = ? 
+                      OR (user_id = ? AND created_at >= ? )
                     ORDER BY created_at DESC;
                   `;
 
@@ -69,6 +71,7 @@ class Story {
         ...friendIds, // Spread friendIds vào các vị trí ? trong câu truy vấn
         formattedDate,
         user_id, // Tin của chính người dùng
+        formattedDate,
       ]);
       return results;
     } catch (error) {
@@ -76,6 +79,7 @@ class Story {
       throw error;
     }
   }
+
   static async getStoryById(id_story) {
     const query = `SELECT * FROM story WHERE (story_id = ?)`;
     try {
@@ -86,6 +90,24 @@ class Story {
       throw error;
     }
   }
+
+  static async getAllMyStory(user_id) {
+    // Truy vấn SQL để lấy tin của bạn bè và của chính người dùng
+    const query = `
+                    SELECT * FROM story 
+                    WHERE (user_id = ?)
+                    ORDER BY created_at DESC;
+                  `;
+
+    try {
+      const [results] = await db.execute(query, [user_id]);
+      return results;
+    } catch (error) {
+      console.error("Error fetching stories:", error);
+      throw error;
+    }
+  }
+
 
   static async getStoriesByUserId(user_id, my_id) {
     const twentyFourHoursAgo = new Date(
@@ -146,9 +168,9 @@ class Story {
       const [result] = await db.execute(updateHeartQuery, [story_id]);
 
       if (result.affectedRows > 0) {
-        return { success: true, message: "Thả tim thành công!" };
+        return { success: true };
       }
-      return { success: false, message: "Không tìm thấy story." };
+      return { success: false };
     } catch (error) {
       console.error("Lỗi khi thả tim:", error);
       throw error;

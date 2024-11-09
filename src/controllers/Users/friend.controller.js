@@ -64,12 +64,10 @@ export const acceptFriend = async (req, res) => {
       const result = await Friend.updateStatus(requestor_id, receiver_id, 1);
 
       if (result === 1) {
-        res
-          .status(200)
-          .json({
-            status: true,
-            message: "Các bạn đã trở thành bạn bè, hãy trò chuyện ngay",
-          });
+        res.status(200).json({
+          status: true,
+          message: "Các bạn đã trở thành bạn bè, hãy trò chuyện ngay",
+        });
       } else {
         res.status(404).json({ status: false, message: "Lỗi bất định" });
       }
@@ -121,12 +119,48 @@ export const getAllRequestorsByReceiverId = async (req, res) => {
       if (requests.length > 0) {
         res.status(200).json({ status: true, data: requests });
       } else {
-        res
-          .status(404)
-          .json({ status: false, message: "Không tìm thấy yêu cầu kết bạn" });
+        res.status(200).json({ status: true });
       }
     } else {
       throw new Error("Người dùng không tồn tại");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ status: false, message: error.message ?? error });
+  }
+};
+
+// Lấy tất cả các yêu cầu kết bạn bởi ID của người nhận
+export const getListSuggest = async (req, res) => {
+  try {
+    const user_id = req.body?.data?.user_id;
+
+    // Kiểm tra sự tồn tại của người dùng
+    const listSuggest = await Friend.getSuggestions(user_id);
+
+    if (listSuggest) {
+      res.status(200).json({ status: true, data: listSuggest });
+    } else {
+      res.status(404).json({ status: true, data: [] });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ status: false, message: error.message ?? error });
+  }
+};
+
+// Lấy tất cả các yêu cầu kết bạn bởi ID của người nhận
+export const getDobFriends = async (req, res) => {
+  try {
+    const user_id = req.body?.data?.user_id;
+
+    // Kiểm tra sự tồn tại của người dùng
+    const dobList = await Friend.getBobFriends(user_id);
+
+    if (dobList) {
+      res.status(200).json({ status: true, data: dobList });
+    } else {
+      res.status(404).json({ status: true, data: [] });
     }
   } catch (error) {
     console.log(error);
@@ -168,7 +202,6 @@ export const deleteFriend = async (req, res) => {
   try {
     const { requestor_id, receiver_id } = req.body;
     const owner_id = req.body?.data?.user_id;
-    console.log(req.body);
 
     if (owner_id === requestor_id || owner_id === receiver_id) {
       // Kiểm tra sự tồn tại của người gửi và người nhận

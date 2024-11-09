@@ -74,6 +74,7 @@ const createGroupChannel = async (req, res) => {
       member_id: admin_id,
       group_id, // Sử dụng group_id đã tạo
       member_role: 1,
+      member_status: 1,
     });
 
     const memberResult = await groupMember.create();

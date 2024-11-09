@@ -49,30 +49,31 @@ const listStory = async (req, res) => {
   try {
     const user_id = req.body?.data?.user_id; // Lấy ID người dùng từ body
     const stories = await Story.getAllStory(user_id);
+    if (stories ?? false) {
+      // Khởi tạo các mảng để chứa thông tin stories và thông tin người dùng
+      const storiesWithUserInfo = await Promise.all(
+        stories?.map(async (story) => {
+          const profileUser = await Users.getById(story.user_id);
+          const avatar = await ProfileMedia.getLatestAvatarById(story.user_id); // Gọi hàm để lấy avatar mới nhất
 
-    // Khởi tạo các mảng để chứa thông tin stories và thông tin người dùng
-    const storiesWithUserInfo = await Promise.all(
-      stories.map(async (story) => {
-        const profileUser = await Users.getById(story.user_id);
-        const avatar = await ProfileMedia.getLatestAvatarById(story.user_id); // Gọi hàm để lấy avatar mới nhất
+          return {
+            story_id: story.story_id,
+            media_link: story.media_link,
+            audio_link: story.audio_link,
+            created_at: story.created_at,
+            user_id: story.user_id,
+            user_name: profileUser.user_name, // Tên người dùng
+            avatar: avatar, // Avatar của người dùng
+            story_privacy: story.story_privacy,
+          };
+        })
+      );
 
-        return {
-          story_id: story.story_id,
-          media_link: story.media_link,
-          audio_link: story.audio_link,
-          created_at: story.created_at,
-          user_id: story.user_id,
-          user_name: profileUser.user_name, // Tên người dùng
-          avatar: avatar, // Avatar của người dùng
-          story_privacy: story.story_privacy,
-        };
-      })
-    );
-
-    res.status(200).json({
-      status: true,
-      data: storiesWithUserInfo,
-    });
+      res.status(200).json({
+        status: true,
+        data: storiesWithUserInfo,
+      });
+    }
   } catch (error) {
     console.error("Lỗi khi lấy danh sách story:", error);
     res.status(500).json({
@@ -81,17 +82,57 @@ const listStory = async (req, res) => {
     });
   }
 };
+
+
+
+// list stories
+const listMyStory = async (req, res) => {
+  try {
+    const user_id = req.body?.data?.user_id; // Lấy ID người dùng từ body
+    const stories = await Story.getAllMyStory(user_id);
+    if (stories ?? false) {
+      // Khởi tạo các mảng để chứa thông tin stories và thông tin người dùng
+      const storiesWithUserInfo = await Promise.all(
+        stories?.map(async (story) => {
+          const profileUser = await Users.getById(story.user_id);
+          const avatar = await ProfileMedia.getLatestAvatarById(story.user_id); // Gọi hàm để lấy avatar mới nhất
+
+          return {
+            story_id: story.story_id,
+            media_link: story.media_link,
+            audio_link: story.audio_link,
+            created_at: story.created_at,
+            user_id: story.user_id,
+            user_name: profileUser.user_name, // Tên người dùng
+            avatar: avatar, // Avatar của người dùng
+            story_privacy: story.story_privacy,
+          };
+        })
+      );
+
+      res.status(200).json({
+        status: true,
+        data: storiesWithUserInfo,
+      });
+    }
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách story:", error);
+    res.status(500).json({
+      status: false,
+      message: "Đã xảy ra lỗi, vui lòng thử lại sau",
+    });
+  }
+};
+
 // Lấy story theo ID
 const storyById = async (req, res) => {
   try {
     const story_id = req.params.id; // Lấy ID story từ params
-
     const story = await Story.getStoryById(story_id);
 
     if (!story) {
       return res.status(404).json({
         status: false,
-        message: "Không tìm thấy story",
       });
     }
 
@@ -101,7 +142,6 @@ const storyById = async (req, res) => {
     if (!user_id) {
       return res.status(400).json({
         status: false,
-        message: "Không thể lấy thông tin người dùng cho story này",
       });
     }
 
@@ -133,11 +173,11 @@ const storyById = async (req, res) => {
   }
 };
 
+
 async function fetchUserStories(req, res) {
   const { id } = req.params; // Lấy user_id từ params
   const user_id = req.body?.data?.user_id;
 
-  
   try {
     const storyItem = await Story.getStoryById(id);
     if (!storyItem) {
@@ -151,9 +191,8 @@ async function fetchUserStories(req, res) {
 
     // Nếu không có story nào
     if (!stories.length) {
-      return res.status(404).json({
+      return res.status(200).json({
         status: false,
-        message: "Không tìm thấy story cho người dùng này",
       });
     }
 
@@ -234,4 +273,5 @@ export {
   createHeartStory,
   fetchUserStories,
   deleteStory,
+  listMyStory
 };

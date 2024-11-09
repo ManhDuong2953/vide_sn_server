@@ -27,6 +27,53 @@ class GroupMember extends GroupChannel {
     }
   }
 
+  static async checkRole(user_id, group_id) {
+    try {
+      
+      const getGroupMembersQuery = `
+                SELECT * FROM GroupMember
+                WHERE group_id = ? AND member_id = ?;
+            `;
+      const [result] = await db.execute(getGroupMembersQuery, [
+        group_id,
+        user_id,
+      ]);
+      
+      if (result[0]?.member_id) {
+        return result[0];
+      }
+      return null;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  static async getAllOfficialMemberByGroupId(group_id) {
+    try {
+      const getGroupMembersQuery = `
+                SELECT * FROM GroupMember
+                WHERE group_id = ? AND member_status = 1;
+            `;
+      const [result] = await db.execute(getGroupMembersQuery, [group_id]);
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  static async getAllMemberUnapprovedByGroupId(group_id) {
+    try {
+      const getGroupMembersQuery = `
+                SELECT * FROM GroupMember
+                WHERE group_id = ? AND member_status = 0;
+            `;
+      const [result] = await db.execute(getGroupMembersQuery, [group_id]);
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   static async getAllMemberByGroupId(group_id) {
     try {
       const getGroupMembersQuery = `
