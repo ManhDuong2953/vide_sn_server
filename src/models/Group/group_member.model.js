@@ -48,13 +48,68 @@ class GroupMember extends GroupChannel {
     }
   }
 
+
+  static async updateAcceptInvite(user_id, group_id) {
+    try {
+      
+      const getGroupMembersQuery = `
+                UPDATE GroupMember
+                SET member_status = 1, member_role = 0 WHERE group_id = ? AND member_id = ?;
+            `;
+      const [result] = await db.execute(getGroupMembersQuery, [
+        group_id,
+        user_id,
+      ]);
+      
+     return result.affectedRows;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  static async updateSetAdmin(user_id, group_id) {
+    try {
+      
+      const getGroupMembersQuery = `
+                UPDATE GroupMember
+                SET member_status = 1, member_role = 1 WHERE group_id = ? AND member_id = ?;
+            `;
+      const [result] = await db.execute(getGroupMembersQuery, [
+        group_id,
+        user_id,
+      ]);
+      
+     return result.affectedRows;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  static async updateRefuseInvite(user_id, group_id) {
+    try {
+      
+      const getGroupMembersQuery = `
+                DELETE FROM GroupMember WHERE group_id = ? AND member_id = ?;
+            `;
+      const [result] = await db.execute(getGroupMembersQuery, [
+        group_id,
+        user_id,
+      ]);
+      
+     return result.affectedRows;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   static async getAllOfficialMemberByGroupId(group_id) {
     try {
       const getGroupMembersQuery = `
                 SELECT * FROM GroupMember
-                WHERE group_id = ? AND member_status = 1;
+                WHERE group_id = ? AND member_status = 1 ORDER BY member_role DESC;
             `;
       const [result] = await db.execute(getGroupMembersQuery, [group_id]);
+      
       return result;
     } catch (error) {
       console.error(error);

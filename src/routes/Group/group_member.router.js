@@ -1,14 +1,20 @@
 import { Router } from "express";
 
-import { Authorization } from "../../middlewares/authorization/authorization_token";
+import {
+  Authorization,
+  checkRoleGroup,
+} from "../../middlewares/authorization/authorization_token";
 import Authentication from "../../middlewares/authentication/authentication_token";
 import {
+  acceptInviteByMember,
   checkRoleMember,
   getGroupsByUserID,
   getMemberGroupsByGroupID,
   getMemberGroupsOfficalByGroupID,
   getMemberGroupsUnapprovedByGroupID,
+  refuseInviteByMember,
   sendInviteByMember,
+  setAdminGroup,
 } from "../../controllers/Group/group_member.controller";
 // Cấu hình router
 const GroupMemberRouter = (router = Router()) => {
@@ -26,13 +32,13 @@ const GroupMemberRouter = (router = Router()) => {
   );
 
   router.get(
-    "/list-members-group/",
+    "/list-members-group/:id",
     Authentication,
     Authorization,
     getMemberGroupsByGroupID
   );
   router.get(
-    "/list-members-offical-group/",
+    "/list-members-offical-group/:id",
     Authentication,
     Authorization,
     getMemberGroupsOfficalByGroupID
@@ -50,12 +56,31 @@ const GroupMemberRouter = (router = Router()) => {
     sendInviteByMember
   );
 
-  router.get(
-    "/check-role/:id",
+  router.post(
+    "/accept-invited-group/:id",
     Authentication,
     Authorization,
-    checkRoleMember
+    checkRoleGroup([1]),
+    acceptInviteByMember
   );
+
+  router.post(
+    "/set-admin-group/:id",
+    Authentication,
+    Authorization,
+    checkRoleGroup([1]),
+    setAdminGroup
+  );
+
+  router.post(
+    "/refuse-invited-group/:id",
+    Authentication,
+    Authorization,
+    checkRoleGroup([1]),
+    refuseInviteByMember
+  );
+
+  router.get("/check-role/:id", Authentication, Authorization, checkRoleMember);
   return router;
 };
 

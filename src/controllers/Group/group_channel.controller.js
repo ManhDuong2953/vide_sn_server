@@ -115,5 +115,95 @@ const getInfoGroupChannel = async (req, res) => {
     res.status(404).json({ status: false, message: error.message });
   }
 };
+// Controller để cập nhật thông tin nhóm
+const updateGroup = async (req, res) => {
+  try {
+    const groupId = req.params?.group_id;
+    const { group_name, group_slogan, group_privacy } = req.body;
+    let avatar_media_link = null;
+    let cover_media_link = null;
 
-export { createGroupChannel, getInfoGroupChannel };
+    if (!groupId) {
+      return res.status(400).json({
+        status: false,
+        message: "Group không tồn tại",
+      });
+    }
+
+    // Kiểm tra và tải lên ảnh nếu có
+    if (req.files) {
+      const uploadPromises = [];
+
+      if (req.files.avatar) {
+        uploadPromises.push(
+          uploadFile(req.files.avatar[0], process.env.NAME_FOLDER_AVT_GROUP)
+            .then((response) => (avatar_media_link = response.url))
+            .catch((error) => {
+              console.error("Error uploading avatar:", error);
+              return null;
+            })
+        );
+      }
+
+      if (req.files.cover) {
+        uploadPromises.push(
+          uploadFile(req.files.cover[0], process.env.NAME_FOLDER_COVER_GROUP)
+            .then((response) => (cover_media_link = response.url))
+            .catch((error) => {
+              console.error("Error uploading cover:", error);
+              return null;
+            })
+        );
+      }
+
+      await Promise.all(uploadPromises);
+    }
+
+    // Cập nhật thông tin nhóm
+    const isUpdated = await GroupChannel.updateGroup(groupId, {
+      group_name,
+      group_slogan,
+      group_privacy,
+      avatar_media_link,
+      cover_media_link,
+    });
+
+    if (isUpdated) {
+      return res
+        .status(200)
+        .json({ status: true, message: "Cập nhật nhóm thành công" });
+    }
+
+    res.status(404).json({ status: false, message: "Không thể cập nhật nhóm" });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+// Controller để xóa nhóm
+const deleteGroup = async (req, res) => {
+  try {
+    const groupId = req.params?.group_id;
+
+    if (!groupId) {
+      return res.status(400).json({
+        status: false,
+        message: "Group không tồn tại",
+      });
+    }
+
+    const isDeleted = await GroupChannel.deleteGroup(groupId);
+
+    if (isDeleted) {
+      return res
+        .status(200)
+        .json({ status: true, message: "Xóa nhóm thành công" });
+    }
+
+    res.status(404).json({ status: false, message: "Không thể xóa nhóm" });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+export { createGroupChannel, getInfoGroupChannel, deleteGroup, updateGroup };
