@@ -194,7 +194,7 @@ CREATE TABLE
 
 CREATE TABLE
     GroupMember (
-        member_id VARCHAR(255) NOT NULL,
+        member_id VARCHAR(255) NOT NULL PRIMARY KEY,
         group_id VARCHAR(255) NOT NULL,
         member_status INT DEFAULT 0,
         member_role INT DEFAULT 0,

@@ -36,18 +36,19 @@ class Post {
       throw error;
     }
   }
-  async update() {
+  async update(user_id) {
     try {
       const query = `
         UPDATE Post 
         SET post_privacy = ?, post_text = ?, react_emoji = ? 
-        WHERE post_id = ?;
+        WHERE post_id = ? and user_id = ?;
       `;
       const [result] = await db.execute(query, [
         this.post_privacy,
         this.post_text,
         this.react_emoji,
         this.post_id,
+        user_id
       ]);
 
       return result.affectedRows > 0;
@@ -71,7 +72,7 @@ SELECT
 FROM 
     Post p
 JOIN 
-    users u ON p.user_id = u.user_id
+    user u ON p.user_id = u.user_id
 LEFT JOIN (
     SELECT 
         user_id, 
@@ -116,7 +117,7 @@ ORDER BY
       FROM 
           Post p
       JOIN 
-          users u ON p.user_id = u.user_id
+          user u ON p.user_id = u.user_id
       LEFT JOIN (
           SELECT 
               user_id, 
@@ -161,7 +162,7 @@ ORDER BY
       FROM 
         Post p
       JOIN 
-        users u ON p.user_id = u.user_id
+        user u ON p.user_id = u.user_id
       LEFT JOIN (
         SELECT 
           user_id, 

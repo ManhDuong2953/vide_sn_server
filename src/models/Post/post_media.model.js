@@ -3,11 +3,14 @@ import Post from "./post.model.js";
 
 class PostMedia extends Post {
   constructor(data) {
+    super(data); // Call parent constructor to initialize post properties
     this.post_id = data.post_id; // Associated post
     this.media_link = data.media_link; // Link to the media
     this.media_type = data.media_type; // Type of the media (e.g., image, video)
   }
 
+  
+  
   async create() {
     try {
       const createMediaRequestQuery = `
