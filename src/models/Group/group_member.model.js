@@ -13,13 +13,14 @@ class GroupMember extends GroupChannel {
   async create() {
     try {
       const createGroupMemberQuery = `
-                INSERT INTO GroupMember (group_id, member_id, member_role)
-                VALUES (?,?,?);
+                INSERT INTO GroupMember (group_id, member_id, member_role, member_status)
+                VALUES (?,?,?,?);
             `;
       const [result] = await db.execute(createGroupMemberQuery, [
         this.group_id,
         this.member_id,
         this.member_role,
+        this.member_status,
       ]);
       return result.affectedRows;
     } catch (error) {

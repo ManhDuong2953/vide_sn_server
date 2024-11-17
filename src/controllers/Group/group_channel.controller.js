@@ -84,7 +84,9 @@ const createGroupChannel = async (req, res) => {
       res.status(200).json({
         status: true,
         message: "Tạo nhóm thành công!",
-        group_id, // Trả về group_id của nhóm vừa tạo
+        data: {
+          group_id
+        }, // Trả về group_id của nhóm vừa tạo
       });
     } else {
       res.status(400).json({
