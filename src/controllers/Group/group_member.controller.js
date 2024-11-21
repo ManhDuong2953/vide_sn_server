@@ -248,3 +248,32 @@ export const refuseInviteByMember = async (req, res) => {
     res.status(404).json({ status: false, message: error.message });
   }
 };
+
+//Rút lời mời
+export const deleteInviteByMember = async (req, res) => {
+  try {
+    const groupId = req.params?.id;
+
+    const my_id = req.body?.data?.user_id;
+
+    if (!groupId ) {
+      return res.status(400).json({
+        status: false,
+        message: "Group này không tồn tại",
+      });
+    }
+
+    const isRefuse = await GroupMember.updateRefuseInvite(my_id, groupId);
+    if (isRefuse > 0) {
+      return res.status(200).json({ status: true });
+    }
+    res
+      .status(404)
+      .json({
+        status: false,
+        message: "Lỗi khi từ chối lời mời tham gia nhóm",
+      });
+  } catch (error) {
+    res.status(404).json({ status: false, message: error.message });
+  }
+};

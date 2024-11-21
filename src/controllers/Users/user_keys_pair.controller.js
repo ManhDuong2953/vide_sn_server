@@ -47,7 +47,6 @@ const checkSecretDeCryptoPrivateKey = async (req, res) => {
   try {
     const user_id = req.body?.data?.user_id;
     const code = req.body?.code;
-    console.log(code);
     
     const result = await UserKeysPair.checkPrivateKey(user_id, code);
     

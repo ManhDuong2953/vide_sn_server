@@ -1,5 +1,7 @@
 import uploadFile from "../../configs/cloud/cloudinary.config";
 import db from "../../configs/database/database.config";
+import GroupChannel from "../../models/Group/group_channel.model";
+import GroupPost from "../../models/Group/group_post.model";
 import Post from "../../models/Post/post.model";
 import PostMedia from "../../models/Post/post_media.model";
 import PostReact from "../../models/Post/react_post.model";
@@ -137,8 +139,6 @@ const editPost = async (req, res) => {
       await db.execute(`DELETE FROM PostMedia WHERE post_id = ?`, [post_id]);
 
       for (const file of files) {
-        console.log("file: ", file);
-        
         const mediaUrl = await uploadFile(file, process.env.NAME_FOLDER_POST);
 
         if (!mediaUrl || !mediaUrl.url) {
@@ -156,11 +156,6 @@ const editPost = async (req, res) => {
           console.error("Loại tệp không được hỗ trợ:", file.mimetype);
           continue;
         }
-        console.log(">>>>>:", {
-          post_id,
-          media_type: mediaType,
-          media_link: mediaUrl.url,
-        });
 
         // Tạo mới media cho bài viết
         const media = new PostMedia({
@@ -223,13 +218,20 @@ const listPost = async (req, res) => {
 
     // Lấy tất cả media cho từng bài viết
     const mediaPromises = posts.map(async (post) => {
-      const media = await PostMedia.getAllMediaByPostId(post.post_id);
+      const postGroup = await GroupPost.getGroupPostAcceptedByPostId(
+        post?.post_id
+      );
+      const media = await PostMedia.getAllMediaByPostId(post?.post_id);
       const reacts = await PostReact.getAllReactByPost(post?.post_id);
-
+      const infor_group = await GroupChannel.getGroupByGroupId(
+        postGroup?.group_id
+      );
       return {
         ...post, // Spread thông tin từ bài viết
         reacts,
         media, // Thêm media vào bài viết
+        postGroup,
+        group: infor_group,
       };
     });
 
@@ -290,44 +292,40 @@ const getPostById = async (req, res) => {
     });
   }
 };
-
 const listPostById = async (req, res) => {
   const my_id = req.body?.data?.user_id ?? null; // Lấy user_id từ request body
   const user_id = req.params.id; // Lấy user_id từ params của request
-  try {
-    const posts = await Post.getAllPostsById(user_id); // Gọi phương thức model để lấy bài viết
 
-    // Kiểm tra quyền truy cập bài viết
-    const filteredPosts = posts.filter((post) => {
-      // Nếu my_id khác user_id thì không cho phép xem bài viết có phạm vi truy cập = 0
+  try {
+    // Gọi phương thức model để lấy danh sách post_id
+    const posts_id = await UserPost.getAllPostByUserId(user_id);
+
+    // Lấy dữ liệu bài viết từ từng post_id
+    const postData = await Promise.all(
+      posts_id.map(async (post_id) => await Post.getPostById(post_id?.post_id))
+    );
+
+    // Lọc bài viết theo quyền truy cập
+    const filteredPosts = postData.filter((post) => {
       return my_id === user_id || post.post_privacy !== 0;
     });
 
-    // Nếu không có bài viết nào thỏa mãn điều kiện, trả về phản hồi 404
+    // Nếu không có bài viết nào thỏa mãn điều kiện
     if (filteredPosts.length === 0) {
       return res.status(200).json({ status: false, data: [] });
     }
 
-    // Lấy tất cả media và reacts cho từng bài viết
-    const mediaAndReactPromises = filteredPosts.map(async (post) => {
-      const media = await PostMedia.getAllMediaByPostId(post.post_id); // Lấy media cho bài viết
-      const reacts = await PostReact.getAllReactByPost(post.post_id); // Lấy reacts cho bài viết
+    // Lấy media và reacts cho từng bài viết
+    const postsWithMediaAndReact = await Promise.all(
+      filteredPosts.map(async (post) => {
+        const media = await PostMedia.getAllMediaByPostId(post.post_id); // Lấy media
+        const reacts = await PostReact.getAllReactByPost(post.post_id); // Lấy reacts
+        return { ...post, media, reacts }; // Kết hợp thông tin
+      })
+    );
 
-      return {
-        ...post, // Spread thông tin từ bài viết
-        media, // Thêm media vào bài viết
-        reacts, // Thêm reacts vào bài viết
-      };
-    });
-
-    // Đợi tất cả các promise media và reacts hoàn thành
-    const postsWithMediaAndReact = await Promise.all(mediaAndReactPromises);
-    if (postsWithMediaAndReact.length > 0) {
-      res.status(200).json({ status: true, data: postsWithMediaAndReact });
-    } else {
-      res.status(200).json({ status: true, data: [] });
-    }
-    // Gửi phản hồi thành công với dữ liệu bài viết đã bao gồm media và reacts
+    // Trả về danh sách bài viết
+    return res.status(200).json({ status: true, data: postsWithMediaAndReact });
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({

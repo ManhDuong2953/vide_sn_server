@@ -9,9 +9,7 @@ class UserSetting {
     }
 
     async create() {
-        try {
-            console.log(this);
-            
+        try {            
             const createUserSettingQuery = "INSERT INTO UserSetting (user_id, post_privacy, story_privacy, dark_theme) VALUES (?, ?, ?, ?);"
             const [result] = await db.execute(createUserSettingQuery, [
                 this.user_id,
@@ -74,8 +72,6 @@ class UserSetting {
             updateUserSettingQuery += updates.join(",");
             updateUserSettingQuery += " WHERE user_id = ?";
             params.push(this.user_id);
-
-            console.log(this, updateUserSettingQuery, params);
             const [result] = await db.execute(updateUserSettingQuery, params);
             return result.affectedRows;
         } catch (error) {

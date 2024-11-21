@@ -116,6 +116,46 @@ const getAllUnapprovedGroupPosts = async (req, res) => {
     });
   }
 };
+
+
+const getAllGroupPosts = async (req, res) => {
+  const user_id = req.body?.data?.user_id;
+  try {
+    const posts = await GroupPost.getAllGroupPostJoined(user_id);
+    // Lấy tất cả media cho từng bài viết
+    const mediaPromises = posts.map(async (post) => {
+      const infor_group = await GroupChannel.getGroupByGroupId(post?.group_id);
+      const postContent = await Post.getPostById(post?.post_id);
+      const media = await PostMedia.getAllMediaByPostId(post?.post_id);
+      const reacts = await PostReact.getAllReactByPost(post?.post_id);
+      return {
+        ...post,
+        ...postContent, // Spread thông tin từ bài viết
+        group: infor_group,
+        reacts,
+        media, // Thêm media vào bài viết
+      };
+    });
+
+    // Đợi tất cả các promise media hoàn thành
+    const postsWithMedia = await Promise.all(mediaPromises);
+    // Sắp xếp theo `created_at` giảm dần
+    postsWithMedia.sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    );
+    res.status(200).json({
+      status: true,
+      data: postsWithMedia,
+    });
+  } catch (error) {
+    console.error("Error fetching accepted group posts:", error);
+    res.status(500).json({
+      status: false,
+      message: "Đã xảy ra lỗi, vui lòng thử lại sau.",
+    });
+  }
+};
+
 const acceptGroupPost = async (req, res) => {
   const { group_post_id } = req.body;
 
@@ -188,4 +228,5 @@ export {
   getAllUnapprovedGroupPosts,
   acceptGroupPost,
   deleteGroupPost,
+  getAllGroupPosts
 };

@@ -60,8 +60,6 @@ class UserProfile {
       let updateUserProfileQuery = "UPDATE UserProfile SET";
       let params = [];
       let updates = [];
-      console.log(this);
-
       if (this.date_of_birth) {
         updates.push(" date_of_birth = ?");
         params.push(this.date_of_birth ?? null);
@@ -86,7 +84,6 @@ class UserProfile {
       updateUserProfileQuery += updates.join(",");
       updateUserProfileQuery += " WHERE user_id = ?";
       params.push(this.user_id);
-      console.log(updateUserProfileQuery, params);
 
       const [result] = await db.execute(updateUserProfileQuery, params);
       return result.affectedRows;

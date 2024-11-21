@@ -129,8 +129,6 @@ const getAllUsers = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { user_id } = req.params;
-        console.log(req.files.avatar);
-
         if (!user_id) {
             return res.status(400).json({ status: false, message: 'Thiếu ID người dùng' });
         }
@@ -154,13 +152,9 @@ const updateUser = async (req, res) => {
 // Update user password
 const updateUserPassword = async (req, res) => {
     try {
-        console.log(req.body);
         const { user_password, user_email } = req.body;
-        console.log(user_email, user_password);
         const user = new Users({ user_email: user_email });
-        console.log("User: ", user);
         const result = await user.updatePassword(user_password);
-        console.log(result);
         if (result > 0) {
             res.status(200).json({ status: true, message: 'Mật khẩu đã được cập nhật' });
         } else {

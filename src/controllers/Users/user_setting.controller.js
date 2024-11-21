@@ -26,12 +26,6 @@ const updateUserSetting = async (req, res) => {
             story_privacy,
             dark_theme
         });
-        console.log({
-            user_id: req.body?.data?.user_id,
-            post_privacy,
-            story_privacy,
-            dark_theme
-        });
         
         const result = await userSetting.update();
         if (result > 0) {

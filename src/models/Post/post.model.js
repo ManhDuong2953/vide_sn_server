@@ -1,5 +1,6 @@
 import db from "../../configs/database/database.config.js";
 import { generateId } from "../../ultils/crypto.js";
+import GroupPost from "../Group/group_post.model.js";
 
 class Post {
   constructor(data) {
@@ -103,13 +104,21 @@ ORDER BY
       throw error;
     }
   }
-  static async getAllPostsById(user_id) {
+  static async getAllPosts(my_id) {
+    const list_post_id_group = await GroupPost.getGroupPostByUserId(my_id); 
+    const excludedPostIds = list_post_id_group?.map((item) => item.post_id);
+  
+    // Xử lý chuỗi `post_id`
+    const excludedPostIdsString = excludedPostIds
+      .map((id) => `'${id}'`) // Bọc id trong dấu nháy đơn nếu cần
+      .join(","); 
+  
     const query = `
       SELECT 
           p.post_id, 
           p.post_text, 
-          p.react_emoji, 
           p.post_privacy, 
+          p.react_emoji,
           u.user_id, 
           u.user_name, 
           up.media_link AS avatar,
@@ -125,22 +134,29 @@ ORDER BY
           FROM 
               ProfileMedia
           WHERE 
-              media_type = 'avatar'  -- Lấy chỉ những media có type là 'avatar'
+              media_type = 'avatar' 
               AND (user_id, created_at) IN (
                   SELECT user_id, MAX(created_at) 
                   FROM ProfileMedia
-                  WHERE media_type = 'avatar'  -- Thêm điều kiện vào subquery
+                  WHERE media_type = 'avatar'
                   GROUP BY user_id
               )
       ) up ON u.user_id = up.user_id
-      WHERE 
-          p.user_id = ?  -- Lấy bài viết chỉ của người dùng này
+      WHERE (
+          (
+              (p.user_id = ? AND p.post_privacy IN (0, 1)) 
+              OR (p.user_id != ? AND p.post_privacy = 1)
+          )
+          ${excludedPostIds.length > 0 
+            ? `AND p.post_id NOT IN (${excludedPostIdsString})` 
+            : ""}
+      )
       ORDER BY 
           p.created_at DESC;
     `;
-
+  
     try {
-      const [results] = await db.execute(query, [user_id]);
+      const [results] = await db.execute(query, [my_id, my_id]); 
       return results;
     } catch (error) {
       console.error("Error fetching posts:", error);

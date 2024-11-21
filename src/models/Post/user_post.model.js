@@ -21,11 +21,31 @@ class UserPost extends Post {
 
       // Gán post_id từ kết quả của câu lệnh INSERT
       if (result.affectedRows > 0) {
-          return true; // Trả về true nếu đã chèn thành công
+        return true; // Trả về true nếu đã chèn thành công
       }
       return false; // Trả về false nếu không có dòng nào bị ảnh hưởng
     } catch (error) {
       console.error("Lỗi khi thực hiện câu lệnh SQL:", error);
+      throw error;
+    }
+  }
+  static async getAllPostByUserId(userId) {
+    try {
+      const query = `SELECT 
+                          p.post_id
+                      FROM 
+                          Post p
+                      WHERE 
+                          p.user_id = ?
+                          AND NOT EXISTS (
+                              SELECT 1
+                              FROM GroupPost gp
+                              WHERE gp.post_id = p.post_id
+                          );`;
+      const [result] = await db.execute(query, [userId]);
+
+      return result;
+    } catch (error) {
       throw error;
     }
   }

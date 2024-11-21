@@ -10,7 +10,12 @@ import {
 import express from "express";
 import Authentication from "../../middlewares/authentication/authentication_token.js";
 import { Authorization } from "../../middlewares/authorization/authorization_token.js";
-import { createReactPostById, deleteReactByUserID } from "../../controllers/Post/react_post.controller.js";
+import {
+  createReactPostById,
+  deleteReactByUserID,
+} from "../../controllers/Post/react_post.controller.js";
+import { createSubCommentByCommentId } from "../../controllers/Post/sub_comment_post.controller.js";
+import { createCommentPostById, listCommentByPost } from "../../controllers/Post/comment_post.controller.js";
 const router = express.Router();
 const storage = multer.memoryStorage(); // Bạn có thể thay đổi sang multer.diskStorage() nếu cần
 const upload = multer({ storage });
@@ -38,11 +43,38 @@ export default function PostRouter() {
     Authorization,
     listPostById
   );
-  //   router.post("/create-comment-post/:id",upload.array("file", 1), Authentication, Authorization, createCommentPostById);
-    router.post("/create-react-post/:id",Authentication, Authorization, createReactPostById);
-  //   router.get("/list-comment-post/:id",Authentication, Authorization, listCommentByPost);
-  //   router.post("/create-sub-comment-post/:id",upload.array("file", 1),Authentication, Authorization, createSubCommentByCommentId);
-    router.delete("/delete-react-post/:id",Authentication, Authorization, deleteReactByUserID);
+  router.post(
+    "/create-react-post/:id",
+    Authentication,
+    Authorization,
+    createReactPostById
+  );
+  router.delete(
+    "/delete-react-post/:id",
+    Authentication,
+    Authorization,
+    deleteReactByUserID
+  );
+  router.post(
+    "/create-comment-post/:id",
+    upload.array("file", 1),
+    Authentication,
+    Authorization,
+    createCommentPostById
+  );
+  router.get(
+    "/list-comment-post/:id",
+    Authentication,
+    Authorization,
+    listCommentByPost
+  );
+  router.post(
+    "/create-sub-comment-post/:id",
+    upload.array("file", 1),
+    Authentication,
+    Authorization,
+    createSubCommentByCommentId
+  );
 
   return router;
 }

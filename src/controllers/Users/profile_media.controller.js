@@ -4,7 +4,6 @@ export const getAllProfileMediaByIdUser = async (req, res) => {
   try {
     const user_id = req.body?.data?.user_id;
     const media = await ProfileMedia.getById(user_id);
-    console.log(media);
     if (!media) {
       res.status(404).json({ status: false });
     }

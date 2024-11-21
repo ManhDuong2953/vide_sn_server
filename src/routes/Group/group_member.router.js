@@ -8,6 +8,7 @@ import Authentication from "../../middlewares/authentication/authentication_toke
 import {
   acceptInviteByMember,
   checkRoleMember,
+  deleteInviteByMember,
   getGroupsByUserID,
   getMemberGroupsByGroupID,
   getMemberGroupsOfficalByGroupID,
@@ -78,6 +79,13 @@ const GroupMemberRouter = (router = Router()) => {
     Authorization,
     checkRoleGroup([1]),
     refuseInviteByMember
+  );
+
+  router.post(
+    "/delete-invited-group/:id",
+    Authentication,
+    Authorization,
+    deleteInviteByMember
   );
 
   router.get("/check-role/:id", Authentication, Authorization, checkRoleMember);

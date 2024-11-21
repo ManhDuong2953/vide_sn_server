@@ -1,3 +1,4 @@
+import GroupChannel from "../../models/Group/group_channel.model";
 import GroupMember from "../../models/Group/group_member.model";
 import convertFalsyValues from "../convertFalsy/convertFalsy";
 
@@ -49,7 +50,32 @@ export const checkRoleGroup = (requiredRoles) => async (req, res, next) => {
 
     return res
       .status(403)
-      .json({ status: false, message: "Không có quyền truy cập" });
+      .json({ status: false, message: "Bạn không có quyền truy cập tài nguyên này" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+export const checkPrivacyGroup = async (req, res, next) => {
+  try {
+    const groupId = req.params?.id ?? req.params?.group_id;
+
+    if (!groupId) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Group này không tồn tại" });
+    }
+
+    const roleMember = await GroupChannel.getGroupByGroupId(groupId);
+
+    if (roleMember && roleMember?.group_privacy === 1) {
+      return next();
+    } else if (roleMember && roleMember?.group_privacy === 0) {
+      return checkRoleGroup([0, 1])(req, res, next); // Truyền đúng tham số
+    }
+
+    return res.status(403).json({ status: false });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ status: false, message: error.message });

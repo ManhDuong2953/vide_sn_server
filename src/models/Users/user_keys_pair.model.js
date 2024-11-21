@@ -134,8 +134,6 @@ class UserKeysPair {
       
       if (keyPair) {
           const privateKeyDecode = decryptAES(keyPair.private_key_encrypt, code);
-          console.log("Key pair: ", privateKeyDecode);
-
         if (privateKeyDecode !== null) {
           return {
             private_key: privateKeyDecode,

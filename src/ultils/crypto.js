@@ -50,7 +50,6 @@ const secretKeySame = process.env.KEY_AES_SAME;
 
 // Hàm mã hóa
 export function encryptAES(text, secretKeyAES = secretKey) {
-  console.log(text, secretKeyAES);
   return CryptoJS.AES.encrypt(text, secretKeyAES).toString();
 }
 

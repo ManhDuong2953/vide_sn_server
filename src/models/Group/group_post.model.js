@@ -1,5 +1,6 @@
 import db from "../../configs/database/database.config";
 import { generateId } from "../../ultils/crypto";
+import GroupMember from "./group_member.model";
 
 class GroupPost {
   constructor(data) {
@@ -54,12 +55,56 @@ class GroupPost {
     }
   }
 
-  // Lấy bài đăng nhóm theo ID
-  static async getGroupPostById(group_post_id) {
+  static async getGroupPostByPostId(post_id) {
     try {
-      const query = `SELECT * FROM GroupPost WHERE group_post_id = ?;`;
-      const [result] = await db.execute(query, [group_post_id]);
+      const query = `SELECT * FROM GroupPost WHERE post_id = ?;`;
+      const [result] = await db.execute(query, [post_id]);
       return result[0];
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  static async getGroupPostAcceptedByPostId(post_id) {    
+    try {
+      const query = `SELECT * FROM GroupPost WHERE post_id = ? and status = 1;`;
+      const [result] = await db.execute(query, [post_id]);      
+      return result[0];
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  
+
+  static async getAllGroupPostJoined(user_id) {
+    try {
+      const listMyGroup = await GroupMember.getAllGroupByMemberID(user_id);
+      const groupIds = listMyGroup.map((group) => group?.group_id);
+
+      // Handle case where user is not in any group
+      if (groupIds.length === 0) {
+        return []; // Return an empty array if no groups are joined
+      }
+
+      // If `groupIds` is an array of IDs, use placeholders
+      const placeholders = groupIds.map(() => "?").join(",");
+      const query = `SELECT * FROM GroupPost WHERE status = 1 AND group_id IN (${placeholders})`;
+
+      // Execute the query with the group IDs as parameters
+      const [result] = await db.execute(query, groupIds);
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  
+  // Lấy bài đăng nhóm theo ID người đăng
+  static async getGroupPostByUserId(member_id) {
+    try {
+      const query = `SELECT * FROM GroupPost WHERE member_id = ?;`;
+      const [result] = await db.execute(query, [member_id]);
+      return result;
     } catch (error) {
       console.error(error);
     }
