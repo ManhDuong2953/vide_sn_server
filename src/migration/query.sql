@@ -120,6 +120,7 @@ CREATE TABLE
 
 CREATE TABLE
     UserPost (
+        id_user_post INT auto_increment primary key,
         user_id VARCHAR(255) NOT NULL,
         post_id VARCHAR(255) NOT NULL,
         FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -148,37 +149,25 @@ CREATE TABLE
         comment_id VARCHAR(255) PRIMARY KEY,
         post_id VARCHAR(255) NOT NULL,
         commenting_user_id VARCHAR(255) NOT NULL,
-        comment_text TEXT NOT NULL,
+        comment_text TEXT,
         media_link VARCHAR(1000),
-        FOREIGN KEY (post_id) REFERENCES Post (post_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        media_type VARCHAR(255),
+        count_comment_heart int default 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP FOREIGN KEY (post_id) REFERENCES Post (post_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (commenting_user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE
-    CommentHeart (
-        comment_id VARCHAR(255) NOT NULL,
-        hearted_user_id VARCHAR(255) NOT NULL,
-        FOREIGN KEY (comment_id) REFERENCES PostComment (comment_id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (hearted_user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
-    );
-
-CREATE TABLE
-    SubComment (
+    SubPostComment (
         sub_comment_id VARCHAR(255) PRIMARY KEY,
         comment_id VARCHAR(255),
         replying_user_id VARCHAR(255) NOT NULL,
-        comment_text TEXT NOT NULL,
+        comment_text TEXT,
         media_link VARCHAR(1000),
-        FOREIGN KEY (comment_id) REFERENCES PostComment (comment_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        media_type VARCHAR(255),
+        count_comment_heart int default 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP FOREIGN KEY (comment_id) REFERENCES PostComment (comment_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (replying_user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
-    );
-
-CREATE TABLE
-    SubCommentHeart (
-        sub_comment_id VARCHAR(255) NOT NULL,
-        hearted_user_id VARCHAR(255) NOT NULL,
-        FOREIGN KEY (sub_comment_id) REFERENCES SubComment (sub_comment_id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (hearted_user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE
@@ -254,6 +243,7 @@ CREATE TABLE
         product_description VARCHAR(1000) NOT NULL,
         product_price DECIMAL(9, 0) NOT NULL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        product_category VARCHAR(255) DEFAULT 'Uncategorized',
         product_location VARCHAR(1000) NOT NULL,
         product_longitude VARCHAR(1000) NOT NULL,
         product_latitude VARCHAR(1000) NOT NULL,

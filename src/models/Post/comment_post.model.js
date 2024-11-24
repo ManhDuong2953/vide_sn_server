@@ -9,6 +9,7 @@ class PostComment {
     this.comment_text = data.comment_text || null;
     this.media_link = data.media_link || null;
     this.media_type = data.media_type || null;
+    this.count_comment_heart = data.count_comment_heart || null;
   }
 
   async create() {
@@ -26,6 +27,16 @@ class PostComment {
     ]);
 
     return result.affectedRows > 0;
+  }
+
+  static async getCommentByCommentId(comment_id) {
+    try {
+      const getCommentQuery = "SELECT * FROM PostComment WHERE comment_id =?";
+      const [result] = await db.execute(getCommentQuery, [comment_id]);
+      return result[0];
+    } catch (error) {
+      throw error;
+    }
   }
 
   static async getCommentsWithSubComments(post_id) {
@@ -47,6 +58,7 @@ class PostComment {
                     c.media_link,
                     c.media_type,
                     c.created_at AS comment_created_at,
+                    c.count_comment_heart as comment_count_comment_heart,
                     u.user_name AS commenting_user_name,
                     lpm.media_link AS avatar, -- Sửa chỗ này để dùng CTE
                     sc.sub_comment_id, 
@@ -55,6 +67,7 @@ class PostComment {
                     sc.media_link AS sub_media_link,
                     sc.media_type AS sub_media_type,
                     sc.created_at AS sub_comment_created_at,
+                    sc.count_comment_heart as sub_comment_count_heart,
                     su.user_name AS replying_user_name,
                     la.media_link AS replying_user_avatar
                 FROM PostComment c
@@ -91,6 +104,8 @@ class PostComment {
           sub_comment_created_at,
           replying_user_name,
           replying_user_avatar,
+          comment_count_comment_heart,
+          sub_comment_count_heart,
         } = row;
 
         // Nếu comment chưa tồn tại trong commentsMap, khởi tạo nó
@@ -105,6 +120,7 @@ class PostComment {
             created_at: comment_created_at,
             commenting_user_name,
             avatar,
+            comment_count_comment_heart,
             sub_comments: [],
           };
         }
@@ -120,6 +136,7 @@ class PostComment {
             created_at: sub_comment_created_at,
             replying_user_name,
             replying_user_avatar,
+            sub_comment_count_heart,
           });
         }
       });
@@ -128,6 +145,27 @@ class PostComment {
       return Object.values(commentsMap);
     } catch (error) {
       console.error("Error fetching comments with sub-comments:", error);
+      throw error;
+    }
+  }
+
+  static async updateCommentHeart(comment_id) {
+    try {
+      const query =
+        "UPDATE PostComment SET count_comment_heart = count_comment_heart + 1 WHERE comment_id = ?";
+      const [result] = await db.execute(query, [comment_id]);
+      return result.affectedRows > 0;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async deleteComment(comment_id) {
+    try {
+      const query = "DELETE FROM PostComment WHERE comment_id = ?";
+      const [result] = await db.execute(query, [comment_id]);      
+      return result.affectedRows > 0;
+    } catch (error) {
       throw error;
     }
   }

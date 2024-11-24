@@ -6,6 +6,7 @@ import MessengerRouter from "./Message/messenger.router";
 import { GroupsRouter } from "./Group/index.router";
 import StoryRouter from "./Story/story.router";
 import PostRouter from "./Post/post.router";
+import MarketplaceRouter from "./Marketplace/marketplace.router";
 
 export default function RouterAPI(app) {
   app.use("/users", UserRouter(express.Router()));
@@ -15,5 +16,6 @@ export default function RouterAPI(app) {
   app.use("/group", GroupsRouter(express.Router()));
   app.use("/stories", StoryRouter(express.Router()));
   app.use("/post", PostRouter(express.Router()));
+  app.use("/marketplace", MarketplaceRouter(express.Router()));
   return app;
 }

@@ -9,6 +9,7 @@ class SubPostComment {
     this.comment_text = data.comment_text || null; // Nội dung bình luận
     this.media_link = data.media_link || null; // Đường dẫn media (nếu có)
     this.media_type = data.media_type || null; // Đường dẫn media (nếu có)
+    this.count_comment_heart = data.count_comment_heart || null;
   }
 
   // Tạo bình luận cấp 2 mới
@@ -46,6 +47,41 @@ class SubPostComment {
       return rows;
     } catch (error) {
       console.error("Lỗi khi lấy danh sách bình luận cấp 2:", error);
+      throw error;
+    }
+  }
+
+  static async getBySubCommentId(sub_comment_id) {
+    try {
+      const query = `
+        SELECT * FROM SubPostComment WHERE sub_comment_id = ? ORDER BY created_at ASC;
+      `;
+      const [rows] = await db.execute(query, [sub_comment_id]);
+      return rows;
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách bình luận cấp 2:", error);
+      throw error;
+    }
+  }
+  
+  static async updateSubCommentHeart(comment_id) {
+    try {
+      const query =
+        "UPDATE SubPostComment SET count_comment_heart = count_comment_heart + 1 WHERE comment_id = ?";
+      const [result] = await db.execute(query, [comment_id]);
+      return result.affectedRows > 0;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async deleteSubComment(sub_comment_id) {
+    try {
+      const query =
+        "DELETE FROM SubPostComment WHERE sub_comment_id = ?";
+      const [result] = await db.execute(query, [sub_comment_id]);
+      return result.affectedRows > 0;
+    } catch (error) {
       throw error;
     }
   }

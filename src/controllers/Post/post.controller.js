@@ -2,6 +2,7 @@ import uploadFile from "../../configs/cloud/cloudinary.config";
 import db from "../../configs/database/database.config";
 import GroupChannel from "../../models/Group/group_channel.model";
 import GroupPost from "../../models/Group/group_post.model";
+import PostComment from "../../models/Post/comment_post.model";
 import Post from "../../models/Post/post.model";
 import PostMedia from "../../models/Post/post_media.model";
 import PostReact from "../../models/Post/react_post.model";
@@ -299,6 +300,7 @@ const listPostById = async (req, res) => {
   try {
     // Gọi phương thức model để lấy danh sách post_id
     const posts_id = await UserPost.getAllPostByUserId(user_id);
+    console.log(posts_id);
 
     // Lấy dữ liệu bài viết từ từng post_id
     const postData = await Promise.all(
@@ -320,12 +322,38 @@ const listPostById = async (req, res) => {
       filteredPosts.map(async (post) => {
         const media = await PostMedia.getAllMediaByPostId(post.post_id); // Lấy media
         const reacts = await PostReact.getAllReactByPost(post.post_id); // Lấy reacts
-        return { ...post, media, reacts }; // Kết hợp thông tin
+        const comments = await PostComment.getCommentsWithSubComments(post.post_id);
+
+        return { ...post, media, reacts, comments }; // Kết hợp thông tin
       })
     );
 
     // Trả về danh sách bài viết
     return res.status(200).json({ status: true, data: postsWithMediaAndReact });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({
+      status: false,
+      message: "Đã xảy ra lỗi, vui lòng thử lại sau",
+    });
+  }
+};
+
+//share bài viết
+const sharePost = async (req, res) => {
+  try {
+    const post_id = req.params?.id;
+    const user_id = req.body?.data?.user_id;
+    const postUser = new UserPost({
+      post_id,
+      user_id,
+    });
+    const result = await postUser.create();
+    if (result) {
+      res.status(200).json({
+        status: true,
+      });
+    }
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({
@@ -342,4 +370,5 @@ export {
   getPostById,
   listPostById,
   editPost,
+  sharePost,
 };

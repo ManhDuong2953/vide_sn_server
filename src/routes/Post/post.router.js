@@ -6,6 +6,7 @@ import {
   getPostById,
   listPost,
   listPostById,
+  sharePost,
 } from "../../controllers/Post/post.controller.js";
 import express from "express";
 import Authentication from "../../middlewares/authentication/authentication_token.js";
@@ -14,8 +15,8 @@ import {
   createReactPostById,
   deleteReactByUserID,
 } from "../../controllers/Post/react_post.controller.js";
-import { createSubCommentByCommentId } from "../../controllers/Post/sub_comment_post.controller.js";
-import { createCommentPostById, listCommentByPost } from "../../controllers/Post/comment_post.controller.js";
+import { createSubCommentByCommentId, deleteSubCommentPost, heartSubCommentByPost } from "../../controllers/Post/sub_comment_post.controller.js";
+import { createCommentPostById, deleteCommentPost, heartCommentByPost, listCommentByPost } from "../../controllers/Post/comment_post.controller.js";
 const router = express.Router();
 const storage = multer.memoryStorage(); // Bạn có thể thay đổi sang multer.diskStorage() nếu cần
 const upload = multer({ storage });
@@ -74,6 +75,43 @@ export default function PostRouter() {
     Authentication,
     Authorization,
     createSubCommentByCommentId
+  );
+
+  router.post(
+    "/share-post/:id",
+    Authentication,
+    Authorization,
+    sharePost
+  );
+
+  
+  router.post(
+    "/heart-comment/:id",
+    Authentication,
+    Authorization,
+    heartCommentByPost
+  );
+
+  router.post(
+    "/heart-sub-comment/:id",
+    Authentication,
+    Authorization,
+    heartSubCommentByPost
+  );
+
+  router.post(
+    "/delete-comment/:id",
+    Authentication,
+    Authorization,
+    deleteCommentPost
+  );
+
+  
+  router.post(
+    "/delete-sub-comment/:id",
+    Authentication,
+    Authorization,
+    deleteSubCommentPost
   );
 
   return router;

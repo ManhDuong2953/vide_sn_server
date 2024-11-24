@@ -4,6 +4,7 @@ import Post from "./post.model.js";
 class UserPost extends Post {
   constructor(data) {
     super(data);
+    this.id_user_post = data.id_user_post;
     this.post_id = data.post_id;
     this.user_id = data.user_id;
   }
@@ -35,13 +36,17 @@ class UserPost extends Post {
                           p.post_id
                       FROM 
                           Post p
+                      INNER JOIN 
+                          UserPost u ON p.post_id = u.post_id
                       WHERE 
-                          p.user_id = ?
-                          AND NOT EXISTS (
+                          u.user_id = ?
+                      AND NOT EXISTS (
                               SELECT 1
                               FROM GroupPost gp
                               WHERE gp.post_id = p.post_id
-                          );`;
+                          )
+                      ORDER BY u.id_user_post DESC    
+                          `;
       const [result] = await db.execute(query, [userId]);
 
       return result;
