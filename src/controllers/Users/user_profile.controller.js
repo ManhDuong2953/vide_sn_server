@@ -1,4 +1,4 @@
-import { UserProfile } from "../../models/userProfile.model";
+import { UserProfile } from "../../models/Users/user_profile.model";
 
 // Create a user profile
 const createUserProfile = async (req, res) => {

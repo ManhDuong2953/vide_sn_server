@@ -2,7 +2,14 @@ import multer from "multer";
 import express from "express";
 import Authentication from "../../middlewares/authentication/authentication_token.js";
 import { Authorization } from "../../middlewares/authorization/authorization_token.js";
-import { createProduct } from "../../controllers/Marketplace/marketplace.controller.js";
+import {
+  createProduct,
+  deleteProduct,
+  getAllProducts,
+  getProductById,
+  searchProducts,
+  updateProduct,
+} from "../../controllers/Marketplace/marketplace.controller.js";
 
 const router = express.Router();
 const storage = multer.memoryStorage(); // Bạn có thể thay đổi sang multer.diskStorage() nếu cần
@@ -16,6 +23,36 @@ export default function MarketplaceRouter() {
     createProduct
   );
 
+  router.get("/get-all-product", Authentication, Authorization, getAllProducts);
+
+  router.get(
+    "/get-product-by-id/:id",
+    Authentication,
+    Authorization,
+    getProductById
+  );
+
+  router.post(
+    "/search-product/",
+    Authentication,
+    Authorization,
+    searchProducts
+  );
+
+  router.delete(
+    "/delete-product-by-id/:id",
+    Authentication,
+    Authorization,
+    deleteProduct
+  );
+
+  router.post(
+    "/update-product-by-id/:id",
+    upload.array("files", 5),
+    Authentication,
+    Authorization,
+    updateProduct
+  );
 
   return router;
 }

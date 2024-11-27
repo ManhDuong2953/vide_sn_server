@@ -1,6 +1,8 @@
 import { Marketplace } from "../../models/Marketplace/marketplace.model";
 import { MarketplaceMedia } from "../../models/Marketplace/marketplace_media.model";
 import uploadFile from "../../configs/cloud/cloudinary.config";
+import { Users } from "../../models/Users/user_account.model";
+import { ProfileMedia } from "../../models/Users/profile_media.model";
 // Thêm sản phẩm mới
 export async function createProduct(req, res) {
   try {
@@ -38,7 +40,12 @@ export async function createProduct(req, res) {
         message: "Sản phẩm đã được thêm thành công!",
         product_id: idProduct,
       });
-    } 
+    } else {
+      return res.status(404).json({
+        status: false,
+        message: "Đăng sản phẩm không thành công!",
+      });
+    }
   } catch (error) {
     console.error("Error creating product:", error);
     return res.status(500).json({ message: "Lỗi server khi thêm sản phẩm." });
@@ -49,7 +56,15 @@ export async function createProduct(req, res) {
 export async function getAllProducts(req, res) {
   try {
     const products = await Marketplace.getAll();
-    return res.status(200).json(products);
+
+    for (const item of products) {
+      // Gán giá trị media
+      item.media = await MarketplaceMedia.getAllByProductId(
+        item.marketplace_product_id
+      );
+    }
+
+    return res.status(200).json({ status: true, data: products });
   } catch (error) {
     console.error("Error fetching products:", error);
     return res
@@ -62,18 +77,46 @@ export async function getAllProducts(req, res) {
 export async function getProductById(req, res) {
   try {
     const { id } = req.params;
+
+    // Lấy thông tin sản phẩm
     const product = await Marketplace.getById(id);
 
-    if (product) {
-      return res.status(200).json(product);
-    } else {
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm." });
+    if (!product) {
+      return res.status(404).json({
+        status: false,
+        message: "Không tìm thấy sản phẩm.",
+      });
     }
+
+    // Lấy thông tin tài khoản người bán
+    const user_account = await Users.getById(product.seller_id);
+
+    // Lấy avatar mới nhất của người bán
+    const user_profile = await ProfileMedia.getLatestAvatarById(
+      user_account?.user_id
+    );
+
+    // Lấy danh sách media của sản phẩm
+    const productMedia = await MarketplaceMedia.getAllByProductId(id);
+
+    // Trả về dữ liệu
+    return res.status(200).json({
+      status: true,
+      data: {
+        product,
+        media: productMedia,
+        user: {
+          ...user_account,
+          avatar: user_profile,
+        },
+      },
+    });
   } catch (error) {
     console.error("Error fetching product by ID:", error);
-    return res
-      .status(500)
-      .json({ message: "Lỗi server khi lấy thông tin sản phẩm." });
+    return res.status(500).json({
+      status: false,
+      message: "Lỗi server khi lấy thông tin sản phẩm.",
+    });
   }
 }
 
@@ -82,32 +125,65 @@ export async function updateProduct(req, res) {
   try {
     const { id } = req.params;
     const data = req.body;
+    const user_id = data?.data?.user_id;
+    const filesMedia = req.files || [];
+    const isChangedFiles = req.body?.isFilesChanged === "true"; // Đảm bảo boolean
+    const productData = await Marketplace.getById(id);
+
+    if (!productData) {
+      return res.status(404).json({ message: "Sản phẩm không tồn tại." });
+    }
+
+    const seller_id = productData.seller_id;
+    if (user_id !== seller_id) {
+      return res
+        .status(403)
+        .json({ message: "Bạn không phải chủ sản phẩm, không thể cập nhật." });
+    }
 
     const product = new Marketplace({
       marketplace_product_id: id,
-      product_name: data.product_name,
-      product_description: data.product_description,
-      product_price: data.product_price,
-      product_category: data.product_category,
-      product_location: data.product_location,
-      product_longitude: data.product_longitude,
-      product_latitude: data.product_latitude,
+      product_name: data?.product_name,
+      product_description: data?.product_description,
+      product_price: data?.product_price,
+      product_category: data?.product_category,
     });
 
     const isUpdated = await product.update();
 
+    if (isUpdated && isChangedFiles && filesMedia.length > 0) {
+      const isDelete = await MarketplaceMedia.deleteAllByProductId(id);
+      if (isDelete) {
+        const uploadPromises = filesMedia.map(async (file) => {
+          const mediaUrl = await uploadFile(
+            file,
+            process.env.NAME_FOLDER_MARKET_PLACE
+          );
+          const media = new MarketplaceMedia({
+            marketplace_product_id: id,
+            media_link: mediaUrl.url,
+          });
+          return media.create();
+        });
+        await Promise.all(uploadPromises);
+      }
+    }
+
     if (isUpdated) {
-      return res.status(200).json({ message: "Cập nhật sản phẩm thành công!" });
-    } else {
       return res
-        .status(404)
-        .json({ message: "Không tìm thấy sản phẩm để cập nhật." });
+        .status(200)
+        .json({ status: true, message: "Cập nhật sản phẩm thành công!" });
+    } else {
+      return res.status(500).json({
+        status: false,
+        message: "Không thể cập nhật sản phẩm, vui lòng thử lại.",
+      });
     }
   } catch (error) {
     console.error("Error updating product:", error);
     return res
       .status(500)
-      .json({ message: "Lỗi server khi cập nhật sản phẩm." });
+      .json({ status: false, message: "Lỗi server khi cập nhật sản phẩm." });
   }
 }
 
@@ -115,15 +191,18 @@ export async function updateProduct(req, res) {
 export async function deleteProduct(req, res) {
   try {
     const { id } = req.params;
-
-    const isDeleted = await Marketplace.delete(id);
+    const user_id = req.body?.data?.user_id;
+    const isDeleted = await Marketplace.delete(id, user_id);
+    console.log(isDeleted);
 
     if (isDeleted) {
-      return res.status(200).json({ message: "Xóa sản phẩm thành công!" });
+      return res
+        .status(200)
+        .json({ status: true, message: "Xóa sản phẩm thành công!" });
     } else {
       return res
-        .status(404)
-        .json({ message: "Không tìm thấy sản phẩm để xóa." });
+        .status(401)
+        .json({ status: false, message: "Bạn không đủ thẩm quyền để xoá" });
     }
   } catch (error) {
     console.error("Error deleting product:", error);
@@ -132,27 +211,26 @@ export async function deleteProduct(req, res) {
 }
 
 // Tìm kiếm sản phẩm
+// Lấy tất cả sản phẩm
 export async function searchProducts(req, res) {
   try {
-    const { query } = req.query;
+    const { query, minPrice, maxPrice, category, location } = req.body;
 
-    if (!query || query.trim() === "") {
-      return res
-        .status(400)
-        .json({ message: "Từ khóa tìm kiếm không hợp lệ." });
+    const products = await Marketplace.search({
+      query,
+      minPrice,
+      maxPrice,
+      category,
+      location,
+    });
+
+    for (const item of products) {
+      item.media = await MarketplaceMedia.getAllByProductId(item.marketplace_product_id);
     }
-
-    const products = await Marketplace.search(query);
-
-    if (products.length > 0) {
-      return res.status(200).json(products);
-    } else {
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm." });
-    }
+    return res.status(200).json({ status: true, data: products });
   } catch (error) {
-    console.error("Error searching products:", error);
-    return res
-      .status(500)
-      .json({ message: "Lỗi server khi tìm kiếm sản phẩm." });
+    console.error("Error fetching products:", error);
+    return res.status(500).json({ message: "Lỗi server khi lấy danh sách sản phẩm." });
   }
 }
+
