@@ -87,6 +87,27 @@ class Friend {
     }
   }
 
+  static async getIDFriends(user_id) {
+    try {
+      const getFriendsQuery = `
+        SELECT 
+          u.user_id 
+        FROM Friend f
+        JOIN User u 
+          ON (u.user_id = f.requestor_id AND f.receiver_id = ?)
+          OR (u.user_id = f.receiver_id AND f.requestor_id = ?)
+        WHERE 
+          f.relationship_status = 1
+      `;
+
+      const [result] = await db.execute(getFriendsQuery, [user_id, user_id]);
+      return result;
+    } catch (error) {
+      console.error("Error fetching friends:", error);
+      throw error;
+    }
+  }
+
   static async deleteFriend(requestor_id, receiver_id) {
     try {
       const deleteFriendQuery = `
@@ -154,7 +175,11 @@ class Friend {
                         AND MONTH(p.date_of_birth) = MONTH(CURDATE())
                         AND u.user_id <> ?;
               `;
-      const [result] = await db.execute(dobFriendQuery, [user_id, user_id, user_id]);
+      const [result] = await db.execute(dobFriendQuery, [
+        user_id,
+        user_id,
+        user_id,
+      ]);
 
       return result ?? []; // Trả về true nếu tồn tại yêu cầu
     } catch (error) {

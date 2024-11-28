@@ -300,7 +300,6 @@ const listPostById = async (req, res) => {
   try {
     // Gọi phương thức model để lấy danh sách post_id
     const posts_id = await UserPost.getAllPostByUserId(user_id);
-    console.log(posts_id);
 
     // Lấy dữ liệu bài viết từ từng post_id
     const postData = await Promise.all(
@@ -322,7 +321,53 @@ const listPostById = async (req, res) => {
       filteredPosts.map(async (post) => {
         const media = await PostMedia.getAllMediaByPostId(post.post_id); // Lấy media
         const reacts = await PostReact.getAllReactByPost(post.post_id); // Lấy reacts
-        const comments = await PostComment.getCommentsWithSubComments(post.post_id);
+        const comments = await PostComment.getCommentsWithSubComments(
+          post.post_id
+        );
+
+        return { ...post, media, reacts, comments }; // Kết hợp thông tin
+      })
+    );
+
+    // Trả về danh sách bài viết
+    return res.status(200).json({ status: true, data: postsWithMediaAndReact });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({
+      status: false,
+      message: "Đã xảy ra lỗi, vui lòng thử lại sau",
+    });
+  }
+};
+
+const listPostBySearch = async (req, res) => {
+  try {
+    const { keyword } = req.body;
+    const my_id = req.body?.data?.user_id;
+    const posts_id = await Post.searchPost(keyword);
+    // Lấy dữ liệu bài viết từ từng post_id
+    const postData = await Promise.all(
+      posts_id.map(async (post_id) => await Post.getPostById(post_id?.post_id))
+    );
+
+    // Lọc bài viết theo quyền truy cập
+    const filteredPosts = postData.filter((post) => {
+      return my_id === post?.user_id || post.post_privacy !== 0;
+    });
+
+    // Nếu không có bài viết nào thỏa mãn điều kiện
+    if (filteredPosts.length === 0) {
+      return res.status(200).json({ status: false, data: [] });
+    }
+
+    // Lấy media và reacts cho từng bài viết
+    const postsWithMediaAndReact = await Promise.all(
+      filteredPosts.map(async (post) => {
+        const media = await PostMedia.getAllMediaByPostId(post.post_id); // Lấy media
+        const reacts = await PostReact.getAllReactByPost(post.post_id); // Lấy reacts
+        const comments = await PostComment.getCommentsWithSubComments(
+          post.post_id
+        );
 
         return { ...post, media, reacts, comments }; // Kết hợp thông tin
       })
@@ -371,4 +416,5 @@ export {
   listPostById,
   editPost,
   sharePost,
+  listPostBySearch,
 };

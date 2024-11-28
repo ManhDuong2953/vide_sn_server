@@ -53,7 +53,6 @@
           this.sender_id,
           this.receiver_id,
         ]);
-        console.log(result);
 
         return result?.insertId ?? false;
       } catch (error) {

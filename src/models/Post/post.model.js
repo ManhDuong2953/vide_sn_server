@@ -49,7 +49,7 @@ class Post {
         this.post_text,
         this.react_emoji,
         this.post_id,
-        user_id
+        user_id,
       ]);
 
       return result.affectedRows > 0;
@@ -60,59 +60,14 @@ class Post {
   }
 
   static async getAllPosts(my_id) {
-    const query = `
-SELECT 
-    p.post_id, 
-    p.post_text, 
-    p.post_privacy, 
-    p.react_emoji,
-    u.user_id, 
-    u.user_name, 
-    up.media_link AS avatar,
-    p.created_at 
-FROM 
-    Post p
-JOIN 
-    user u ON p.user_id = u.user_id
-LEFT JOIN (
-    SELECT 
-        user_id, 
-        media_link
-    FROM 
-        ProfileMedia
-    WHERE 
-        media_type = 'avatar'  -- Lấy chỉ những media có type là 'avatar'
-        AND (user_id, created_at) IN (
-            SELECT user_id, MAX(created_at) 
-            FROM ProfileMedia
-            WHERE media_type = 'avatar'  -- Thêm điều kiện vào subquery
-            GROUP BY user_id
-        )
-) up ON u.user_id = up.user_id
-WHERE 
-    (p.user_id = ? AND p.post_privacy IN (0, 1))  -- Lấy bài viết của người dùng hiện tại với phạm vi 0 hoặc 1
-    OR (p.user_id != ? AND p.post_privacy = 1)    -- Lấy bài viết của người khác chỉ khi phạm vi là 1
-ORDER BY 
-    p.created_at DESC;
-  `;
-
-    try {
-      const [results] = await db.execute(query, [my_id, my_id]); // Truyền my_id vào 2 lần
-      return results;
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-      throw error;
-    }
-  }
-  static async getAllPosts(my_id) {
-    const list_post_id_group = await GroupPost.getGroupPostByUserId(my_id); 
+    const list_post_id_group = await GroupPost.getGroupPostByUserId(my_id);
     const excludedPostIds = list_post_id_group?.map((item) => item.post_id);
-  
+
     // Xử lý chuỗi `post_id`
     const excludedPostIdsString = excludedPostIds
       .map((id) => `'${id}'`) // Bọc id trong dấu nháy đơn nếu cần
-      .join(","); 
-  
+      .join(",");
+
     const query = `
       SELECT 
           p.post_id, 
@@ -147,16 +102,18 @@ ORDER BY
               (p.user_id = ? AND p.post_privacy IN (0, 1)) 
               OR (p.user_id != ? AND p.post_privacy = 1)
           )
-          ${excludedPostIds.length > 0 
-            ? `AND p.post_id NOT IN (${excludedPostIdsString})` 
-            : ""}
+          ${
+            excludedPostIds.length > 0
+              ? `AND p.post_id NOT IN (${excludedPostIdsString})`
+              : ""
+          }
       )
       ORDER BY 
           p.created_at DESC;
     `;
-  
+
     try {
-      const [results] = await db.execute(query, [my_id, my_id]); 
+      const [results] = await db.execute(query, [my_id, my_id]);
       return results;
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -203,6 +160,37 @@ ORDER BY
       return result[0] || null;
     } catch (error) {
       console.error("Error fetching post:", error);
+      throw error;
+    }
+  }
+
+  static async getOwnerPostById(post_id) {
+    const query = `
+      SELECT 
+       user_id
+      FROM 
+        Post
+      WHERE 
+      post_id = ?;
+    `;
+
+    try {
+      const [result] = await db.execute(query, [post_id]);
+      return result[0] || null;
+    } catch (error) {
+      console.error("Error fetching post:", error);
+      throw error;
+    }
+  }
+
+  static async searchPost(keyword) {
+    const query = `SELECT * FROM Post WHERE post_text LIKE ?`;
+    try {
+      const textConvert = `%${keyword}%`;
+      const [result] = await db.execute(query, [textConvert]);
+      return result;
+    } catch (error) {
+      console.error("Error deleting post:", error);
       throw error;
     }
   }

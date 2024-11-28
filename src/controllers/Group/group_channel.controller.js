@@ -85,7 +85,7 @@ const createGroupChannel = async (req, res) => {
         status: true,
         message: "Tạo nhóm thành công!",
         data: {
-          group_id
+          group_id,
         }, // Trả về group_id của nhóm vừa tạo
       });
     } else {
@@ -112,6 +112,16 @@ const getInfoGroupChannel = async (req, res) => {
         .status(404)
         .json({ status: false, message: "Nhóm không tồn tại!" });
     }
+    res.status(200).json({ status: true, data: group });
+  } catch (error) {
+    res.status(404).json({ status: false, message: error.message });
+  }
+};
+
+const searchGroupChannel = async (req, res) => {
+  try {
+    const { keyword } = req.body;
+    const group = await GroupChannel.searchGroupByName(keyword);
     res.status(200).json({ status: true, data: group });
   } catch (error) {
     res.status(404).json({ status: false, message: error.message });
@@ -208,4 +218,10 @@ const deleteGroup = async (req, res) => {
   }
 };
 
-export { createGroupChannel, getInfoGroupChannel, deleteGroup, updateGroup };
+export {
+  createGroupChannel,
+  getInfoGroupChannel,
+  deleteGroup,
+  updateGroup,
+  searchGroupChannel,
+};

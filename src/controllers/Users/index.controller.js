@@ -100,3 +100,35 @@ export async function uploadInfoProfileUser(req, res) {
     });
   }
 }
+
+//search người dùng theo tên hoặc nickname
+export async function searchUserByNameOrNickname(req, res) {
+  try {
+    const { keyword } = req.body;
+    const data_account = await Users.searchByNameOrNickName(keyword);
+
+
+    // Lặp qua từng người dùng để lấy media tương ứng
+    const data_with_media = await Promise.all(
+      data_account.map(async (user) => {
+        const data_media = await ProfileMedia.getLatestAvatarById(user.user_id);
+        return {
+          ...user,
+          avatar: data_media || null, // Thêm trường avatar vào mỗi user (nếu có)
+        };
+      })
+    );
+
+    res.status(200).json({
+      status: true,
+      data: data_with_media,
+    });
+  } catch (error) {
+    console.error(error); // Ghi log lỗi để dễ dàng phát hiện và sửa lỗi
+    res.status(500).json({
+      status: false,
+      message: "Internal Server Error",
+      error: error.message, // Trả về thông điệp lỗi cho client nếu cần
+    });
+  }
+}

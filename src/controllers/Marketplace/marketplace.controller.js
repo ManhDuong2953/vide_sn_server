@@ -193,7 +193,6 @@ export async function deleteProduct(req, res) {
     const { id } = req.params;
     const user_id = req.body?.data?.user_id;
     const isDeleted = await Marketplace.delete(id, user_id);
-    console.log(isDeleted);
 
     if (isDeleted) {
       return res

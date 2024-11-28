@@ -69,6 +69,25 @@ class Users {
     }
   }
 
+  static async searchByNameOrNickName(keyword) {
+    try {
+      console.log(keyword);
+
+      const getUserByIdQuery =
+        "SELECT user_id, user_name, user_nickname, user_email, user_status, user_gender, created_at, user_role, type_account FROM User WHERE user_name LIKE ? OR user_nickname LIKE ?";
+      const searchParam = `%${keyword}%`;
+
+      const [result] = await db.execute(getUserByIdQuery, [
+        searchParam,
+        searchParam,
+      ]);
+      return result;
+    } catch (error) {
+      console.log(error.message);
+      return error;
+    }
+  }
+
   static async getAll() {
     try {
       const getAllUsersQuery = "SELECT * FROM User";
@@ -111,7 +130,6 @@ class Users {
       updateUserQuery += updates.join(",");
       updateUserQuery += " WHERE user_id = ?";
       params.push(this.user_id ?? null);
-
 
       const [result] = await db.execute(updateUserQuery, params);
       return result.affectedRows;

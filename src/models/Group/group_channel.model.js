@@ -55,6 +55,17 @@ class GroupChannel {
     }
   }
 
+  static async searchGroupByName(keyword) {
+    try {
+      const getGroupsQuery = `SELECT * FROM GroupChannel WHERE group_name LIKE ?;`;
+      const searchConvert = `%${keyword}%`;
+      const [result] = await db.execute(getGroupsQuery, [searchConvert]);
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   // Phương thức cập nhật thông tin nhóm
   static async updateGroup(group_id, data) {
     const {

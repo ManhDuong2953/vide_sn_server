@@ -98,13 +98,14 @@ CREATE TABLE
 
 CREATE TABLE
     Notifications (
-        notification_id VARCHAR(255) PRIMARY KEY,
-        user_id VARCHAR(255) NOT NULL,
-        type_notification VARCHAR(255) NOT NULL,
-        content_notification VARCHAR(255),
-        url_direct VARCHAR(1000),
-        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
+        notice_id VARCHAR(255) PRIMARY KEY,
+        sender_id VARCHAR(50) NOT NULL,
+        receiver_id VARCHAR(50) NOT NULL,
+        content TEXT NOT NULL,
+        link_notice VARCHAR(255) DEFAULT NULL,
+        created_at DATETIME NOT NULL,
+        FOREIGN KEY (sender_id) REFERENCES User (user_id),
+        FOREIGN KEY (receiver_id) REFERENCES User (user_id)
     );
 
 CREATE TABLE
