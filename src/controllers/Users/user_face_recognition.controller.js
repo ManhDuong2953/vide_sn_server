@@ -64,20 +64,34 @@ const getUserFaceDataById = async (req, res) => {
 
 
 // Get user face data by ID
-const getAllUserFaceData = async (req, res) => {
+const getAllUserFaceDataByUserIDEncode = async (req, res) => {
     try {
-        const userFaceData = await UserFaceData.getAll();
-        if (userFaceData) {
-            res.status(200).json({ status: true, data: userFaceData });
-        } else {
-            res.status(404).json({ status: false, message: 'User face data not found' });
-        }
+      const { user_email, type_account } = req?.body;
+      const id = await Users.getIdByEmail(user_email, type_account);      
+      let idEncode;
+      if (id?.user_id) {
+        idEncode = await encryptAESSame(id?.user_id);
+      } else {
+        return res.status(404).json({
+          status: false,
+          message: "Tài khoản không tồn tại hoặc chưa thiết lập nhận diện khuôn mặt!",
+        });
+      }
+      const userFaceData = await UserFaceData.getById(idEncode);
+      if (userFaceData) {
+        res.status(200).json({ status: true, data: userFaceData });
+      } else {
+        res.status(404).json({
+          status: false,
+          message: "Tài khoản không tồn tại hoặc chưa thiết lập nhận diện khuôn mặt!",
+        });
+      }
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ status: false, message: error.message ?? error });
+      console.log(error);
+      res.status(500).json({ status: false, message: error.message ?? error });
     }
-};
-
+  };
+  
 
 // Get user face data by ID
 const loginUserFaceData = async (req, res) => {
@@ -115,7 +129,7 @@ const deleteUserFaceData = async (req, res) => {
 export {
     createUserFaceData,
     getUserFaceDataById,
-    getAllUserFaceData,
+    getAllUserFaceDataByUserIDEncode,
     deleteUserFaceData,
     loginUserFaceData
 };

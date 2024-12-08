@@ -104,6 +104,7 @@ CREATE TABLE
         content TEXT NOT NULL,
         link_notice VARCHAR(255) DEFAULT NULL,
         created_at DATETIME NOT NULL,
+        is_seen INT DEFAULT 0,
         FOREIGN KEY (sender_id) REFERENCES User (user_id),
         FOREIGN KEY (receiver_id) REFERENCES User (user_id)
     );
@@ -154,7 +155,8 @@ CREATE TABLE
         media_link VARCHAR(1000),
         media_type VARCHAR(255),
         count_comment_heart int default 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP FOREIGN KEY (post_id) REFERENCES Post (post_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (post_id) REFERENCES Post (post_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (commenting_user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
@@ -167,7 +169,8 @@ CREATE TABLE
         media_link VARCHAR(1000),
         media_type VARCHAR(255),
         count_comment_heart int default 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP FOREIGN KEY (comment_id) REFERENCES PostComment (comment_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (comment_id) REFERENCES PostComment (comment_id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (replying_user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
@@ -233,7 +236,8 @@ CREATE TABLE
         reply_messenger_id VARCHAR(255) DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (group_id) REFERENCES GroupChannel (group_id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (sender_id) REFERENCES GroupMember (member_id) ON DELETE CASCADE ON UPDATE CASCADE FOREIGN KEY (reply_messenger_id) REFERENCES GroupMessage (messenger_id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (sender_id) REFERENCES GroupMember (member_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (reply_messenger_id) REFERENCES GroupMessage (messenger_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 CREATE TABLE

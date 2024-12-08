@@ -141,49 +141,57 @@ class Marketplace {
       return null;
     }
   }
-
-  // Tìm kiếm sản phẩm theo tên hoặc danh mục
-  static async search({ query, minPrice, maxPrice, category, location }) {
+  static async search({
+    query,
+    minPrice,
+    maxPrice,
+    category,
+    location,
+    currentPage,
+  }) {
     try {
+      const itemsPerPage = 10; // Số sản phẩm mỗi trang
+      const offset = (currentPage - 1) * itemsPerPage; // Tính toán vị trí bắt đầu
+  
       let searchQuery = "SELECT * FROM MarketPlace WHERE 1 = 1";
       let queryParams = [];
+  
       if (query) {
         searchQuery += ` AND product_name LIKE ?`;
         queryParams.push(`%${query}%`);
       }
-
+  
       if (minPrice) {
         searchQuery += ` AND product_price >= ?`;
         queryParams.push(minPrice);
       }
-
+  
       if (maxPrice) {
         searchQuery += ` AND product_price <= ?`;
         queryParams.push(maxPrice);
       }
-
+  
       if (category) {
         searchQuery += ` AND product_category = ?`;
         queryParams.push(category);
       }
-
+  
       if (location) {
         searchQuery += ` AND product_location LIKE ?`;
         queryParams.push(`%${location}%`);
       }
-
-      // Thêm điều kiện khoảng cách nếu tọa độ hợp lệ
-
-      searchQuery += ` ORDER BY created_at DESC`; // Nếu không có tọa độ, sắp xếp theo thời gian
-
+  
+      searchQuery += ` ORDER BY created_at DESC LIMIT ${itemsPerPage} OFFSET ${offset}`;
+      
+      // Không cần thêm LIMIT và OFFSET vào queryParams nữa
       const [results] = await db.execute(searchQuery, queryParams);
-
+  
       return results;
     } catch (error) {
       console.error("Error searching products:", error);
       return [];
     }
   }
+  
 }
-
 export { Marketplace };

@@ -69,6 +69,18 @@ class Users {
     }
   }
 
+  static async getIdByEmail(email, type_account) {
+    try {
+      const getUserByIdQuery =
+        "SELECT user_id FROM User  WHERE user_email = ? AND type_account = ?";
+      const [result] = await db.execute(getUserByIdQuery, [email, type_account]);
+      return result[0];
+    } catch (error) {
+      console.log(error.message);
+      return error;
+    }
+  }
+
   static async searchByNameOrNickName(keyword) {
     try {
       console.log(keyword);

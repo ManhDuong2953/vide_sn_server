@@ -70,7 +70,28 @@ const initializeSocket = (httpServer, users) => {
         }
       });
 
-      // Chuỗi sự kiện với Peer
+      // Lắng nghe sự kiện kết thúc cuộc gọi
+      socket.on("endCall", (data) => {
+        // Ensure you send the event to the other user in the call
+        const { receiver_id, sender_id } = data;
+
+        // Find the other user based on their ID and socket ID
+        const receiverSocketId = getSocketIdByUserId(receiver_id, users);
+        const senderSocketId = getSocketIdByUserId(sender_id, users);
+
+        // Emit the "endCall" event to the other user
+        if (receiverSocketId) {
+          io.to(receiverSocketId).emit("callEnded", {
+            message: "The call has ended.",
+          });
+        }
+
+        if (senderSocketId) {
+          io.to(senderSocketId).emit("callEnded", {
+            message: "The call has ended.",
+          });
+        }
+      });
 
       // Nhận peerID người gọi
       socket.on("getPeerIDCaller", (data) => {
@@ -91,6 +112,22 @@ const initializeSocket = (httpServer, users) => {
           });
         } else {
           console.error(`No socket found for user ID: ${data?.sender_id}`);
+        }
+      });
+
+      //Chặn người dùng
+      socket.on("sendBlockUser", (data) => {
+        if (data?.status === "block") {
+          io.to([
+            getSocketIdByUserId(data?.receiver_id, users),
+            getSocketIdByUserId(data?.requestor_id, users),
+          ]).emit("receivedBlockUser", data);
+        }
+        if (data?.status === "unblock") {
+          io.to([
+            getSocketIdByUserId(data?.receiver_id, users),
+            getSocketIdByUserId(data?.requestor_id, users),
+          ]).emit("receivedBlockUser", {});
         }
       });
 

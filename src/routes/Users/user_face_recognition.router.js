@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createUserFaceData, deleteUserFaceData, getAllUserFaceData, getUserFaceDataById, loginUserFaceData } from '../../controllers/Users/user_face_recognition.controller';
+import { createUserFaceData, deleteUserFaceData, getAllUserFaceData, getAllUserFaceDataByUserIDEncode, getUserFaceDataById, loginUserFaceData } from '../../controllers/Users/user_face_recognition.controller';
 import multer from 'multer';
 import Authentication from '../../middlewares/authentication/authentication_token';
 import { Authorization } from '../../middlewares/authorization/authorization_token';
@@ -16,7 +16,7 @@ const UserFaceRecognitionRouter = (router = Router()) => {
         { name: 'images_face_recognition', maxCount: 10 }
     ]),Authentication, Authorization, createUserFaceData);
     router.get('/get-face-recognition/',Authentication, Authorization, getUserFaceDataById);
-    router.get('/get-all-face-recognition', getAllUserFaceData);
+    router.post('/get-all-face-recognition-by-id', getAllUserFaceDataByUserIDEncode);
     router.delete('/delete-face-recognition/',Authentication, Authorization, deleteUserFaceData);
 
     return router;

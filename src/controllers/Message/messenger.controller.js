@@ -85,8 +85,8 @@ const getAllMessages = async (req, res) => {
 
     const listMsgDecrypt = await Promise.all(
       result.map(async (item) => {
-        let content_text = "Encrypted message";
-
+        let content_text = "Tin nhắn đã được mã hoá";
+ 
         if (item.sender_id === user_id) {
           content_text = decryptWithPrivateKey(
             item.content_text_encrypt_by_owner,

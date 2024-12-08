@@ -213,7 +213,7 @@ export async function deleteProduct(req, res) {
 // Lấy tất cả sản phẩm
 export async function searchProducts(req, res) {
   try {
-    const { query, minPrice, maxPrice, category, location } = req.body;
+    const { query, minPrice, maxPrice, category, location, currentPage } = req.body;
 
     const products = await Marketplace.search({
       query,
@@ -221,6 +221,7 @@ export async function searchProducts(req, res) {
       maxPrice,
       category,
       location,
+      currentPage
     });
 
     for (const item of products) {

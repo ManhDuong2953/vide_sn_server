@@ -57,7 +57,7 @@ class Notice {
 
   static async deleteAllNoticeCurrentByUser(receiver_id) {
     try {
-      const query = `UPDATE Notifications SET count_notice = 0 where receiver_id = ?`;
+      const query = `UPDATE Notifications SET is_seen = 1 where receiver_id = ?`;
       const [result] = await db.execute(query, [receiver_id]);
       return result.affectedRows > 0;
     } catch (error) {

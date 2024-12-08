@@ -68,8 +68,7 @@ const createUsersBySocialAccount = async (req, res) => {
                 media_link: 'https://res.cloudinary.com/der2ygna3/image/upload/v1730082713/users/cover/mzj5tslenqew6qdcpime.jpg'
             }).create();
             new UserProfile({
-                user_id,
-                ...data
+                user_id: user_id
             }).create();
             const userSetting = new UserSetting({
                 user_id: user_id

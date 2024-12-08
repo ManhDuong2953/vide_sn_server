@@ -69,9 +69,7 @@ const listCommentByPost = async (req, res) => {
 
     if (comments.length > 0) {
       res.status(200).json({ status: true, data: comments });
-    } else {
-      res.status(404).json({ status: false, data: [] });
-    }
+    } 
   } catch (error) {
     console.error("Error fetching comments:", error);
     res.status(500).json({

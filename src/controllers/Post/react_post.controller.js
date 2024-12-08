@@ -19,13 +19,15 @@ const createReactPostById = async (req, res) => {
     const result = await reactPost.create();
 
     if (result) {
+      //gửi thông báo cho bạn bè
+
       await sendNoticeToFriends(
         user_id,
         [ownerPost],
         "đã bày tỏ cảm xúc với bài viết của bạn.",
         "/post/" + post_id
       );
-      //gửi thông báo cho bạn bè
+
       return res.status(200).json({ status: true });
     } else {
       res.status(404).json({ status: false });

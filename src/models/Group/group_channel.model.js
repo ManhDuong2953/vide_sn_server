@@ -47,11 +47,12 @@ class GroupChannel {
 
   static async getGroupByGroupId(group_id) {
     try {
+      if (!group_id) return false;
       const getGroupsQuery = `SELECT * FROM GroupChannel WHERE group_id = ?;`;
       const [result] = await db.execute(getGroupsQuery, [group_id]);
       return result[0];
     } catch (error) {
-      console.error(error);
+      return error;
     }
   }
 

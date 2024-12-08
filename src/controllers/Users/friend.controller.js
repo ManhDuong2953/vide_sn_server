@@ -1,4 +1,4 @@
-import Friend from "../../models/Users/friend.model";
+import Friend, { FriendBlock } from "../../models/Users/friend.model";
 import { Users } from "../../models/Users/user_account.model";
 
 // Tạo yêu cầu kết bạn
@@ -197,6 +197,31 @@ export const statusFriend = async (req, res) => {
   }
 };
 
+// Kiểm tra bạn bè chưa
+export const getCountManualFriend = async (req, res) => {
+  try {
+    const { friend_id } = req.params;
+
+    const owner_id = req.body?.data?.user_id;
+
+    // Kiểm tra sự tồn tại của người gửi và người nhận
+    const [checkRequestor, checkReceiver] = await Promise.all([
+      Users.getById(friend_id),
+      Users.getById(owner_id),
+    ]);
+
+    if (checkRequestor?.user_id && checkReceiver?.user_id) {
+      const result = await Friend.getMutualFriend(friend_id, owner_id);
+      if (result?.mutual_friend_count) {
+        res.status(200).json({ status: true, data: result });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ status: false, message: error.message ?? error });
+  }
+};
+
 // Xóa bạn bè
 export const deleteFriend = async (req, res) => {
   try {
@@ -223,6 +248,109 @@ export const deleteFriend = async (req, res) => {
       }
     } else {
       throw new Error("Người dùng không có thẩm quyền");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ status: false, message: error.message ?? error });
+  }
+};
+
+// Block bạn bè
+export const blockFriend = async (req, res) => {
+  try {
+    const { receiver_id } = req.params;
+    const requestor_id = req.body?.data?.user_id;
+    if (!receiver_id || !requestor_id) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Thiếu thông tin cần thiết" });
+    }
+
+    // Kiểm tra sự tồn tại của người gửi và người nhận
+    const [checkRequestor, checkReceiver] = await Promise.all([
+      Users.getById(requestor_id),
+      Users.getById(receiver_id),
+    ]);
+
+    if (checkRequestor?.user_id && checkReceiver?.user_id) {
+      const frBlock = new FriendBlock({
+        requestor_id,
+        receiver_id,
+      });
+      const result = await frBlock.create(requestor_id, receiver_id);
+
+      if (result > 0) {
+        res
+          .status(200)
+          .json({ status: true, message: "Bạn đã chặn người dùng này" });
+      } else {
+        res.status(404).json({ status: false });
+      }
+    } else {
+      throw new Error("Người dùng không tồn tại");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ status: false, message: error.message ?? error });
+  }
+};
+
+// Block bạn bè
+export const checkBlockFriend = async (req, res) => {
+  try {
+    const { receiver_id } = req.params;
+    const requestor_id = req.body?.data?.user_id;
+    // Kiểm tra sự tồn tại của người gửi và người nhận
+    const [checkRequestor, checkReceiver] = await Promise.all([
+      Users.getById(requestor_id),
+      Users.getById(receiver_id),
+    ]);
+
+    if (checkRequestor?.user_id && checkReceiver?.user_id) {
+      const result = await FriendBlock.checkBlockedUsers(
+        requestor_id,
+        receiver_id
+      );
+
+      if (result) {
+        res.status(200).json({ status: true, data: result });
+      } else {
+        res.status(404).json({ status: false });
+      }
+    } else {
+      throw new Error("Người dùng không tồn tại");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ status: false, message: error.message ?? error });
+  }
+};
+
+// gỡ Block bạn bè
+export const deleteBlockFriend = async (req, res) => {
+  try {
+    const { receiver_id } = req.params;
+    const requestor_id = req.body?.data?.user_id;
+
+    // Kiểm tra sự tồn tại của người gửi và người nhận
+    const [checkRequestor, checkReceiver] = await Promise.all([
+      Users.getById(requestor_id),
+      Users.getById(receiver_id),
+    ]);
+
+    if (checkRequestor?.user_id && checkReceiver?.user_id) {
+      const frBlock = new FriendBlock({ requestor_id, receiver_id });
+      const result = await frBlock.deleteBlock(requestor_id, receiver_id);
+      if (result > 0) {
+        res.status(200).json({
+          status: true,
+          message: "Bạn đã gỡ chặn, load lại trang để lệnh gỡ có hiệu lực",
+        });
+      } else {
+        res.status(404).json({ status: false });
+      }
+    } else {
+      throw new Error("Người dùng không tồn tại");
     }
   } catch (error) {
     console.log(error);

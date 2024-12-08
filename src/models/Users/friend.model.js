@@ -161,6 +161,32 @@ class Friend {
     }
   }
 
+  // Kiểm tra số bạn chung
+  static async getMutualFriend(requestor_id, receiver_id) {
+    try {
+      const checkRequestQuery = `
+      SELECT COUNT(*) AS mutual_friend_count
+      FROM Friend f1
+      JOIN Friend f2 ON f1.receiver_id = f2.receiver_id
+      WHERE f1.requestor_id = ? AND f2.requestor_id = ?
+        AND f1.receiver_id NOT IN (?, ?);
+    `;
+
+      // Chạy truy vấn với các tham số
+      const [result] = await db.execute(checkRequestQuery, [
+        requestor_id, // Người yêu cầu
+        receiver_id, // Người nhận
+        requestor_id, // Loại bỏ chính requestor
+        receiver_id, // Loại bỏ chính receiver
+      ]);
+      // Trả về kết quả là số lượng bạn chung
+      return result[0];
+    } catch (error) {
+      console.error("Error in getMutualFriend:", error);
+      throw error; // Nên throw lỗi để quản lý tại nơi gọi hàm
+    }
+  }
+
   // Lấy sinh nhật bạn bè
   static async getBobFriends(user_id) {
     try {
@@ -253,3 +279,60 @@ class Friend {
   }
 }
 export default Friend;
+
+export class FriendBlock {
+  constructor(data) {
+    this.requestor_id = data.requestor_id;
+    this.receiver_id = data.receiver_id;
+  }
+  async create() {
+    try {
+      const blockQuery = `
+                          INSERT INTO FriendBlock (requestor_id, receiver_id)
+                          VALUES (?, ?);
+                        `;
+      const [result] = await db.execute(blockQuery, [
+        this.requestor_id,
+        this.receiver_id,
+      ]);
+
+      return result.affectedRows;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async checkBlockedUsers(user_id, friend_id) {
+    try {
+      const blockQuery = `
+                          SELECT * FROM FriendBlock WHERE (requestor_id = ? AND receiver_id = ?) OR (requestor_id = ? AND receiver_id = ?);
+                        `;
+      const [result] = await db.execute(blockQuery, [
+        user_id,
+        friend_id,
+        friend_id,
+        user_id,
+      ]);
+
+      return result[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteBlock() {
+    try {
+      const blockQuery = `
+                          DELETE FROM FriendBlock WHERE (requestor_id = ? AND receiver_id = ?);
+                        `;
+      const [result] = await db.execute(blockQuery, [
+        this.requestor_id,
+        this.receiver_id,
+      ]);
+
+      return result?.affectedRows;
+    } catch (error) {
+      throw error;
+    }
+  }
+}

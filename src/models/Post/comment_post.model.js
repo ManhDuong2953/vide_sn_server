@@ -82,6 +82,7 @@ class PostComment {
 
       const [rows] = await db.execute(query, [post_id]);
 
+      if (rows.length === 0) return false;
       // Tổ chức dữ liệu để lồng sub-comments vào từng comment cấp 1
       const commentsMap = {};
 
@@ -163,7 +164,7 @@ class PostComment {
   static async deleteComment(comment_id) {
     try {
       const query = "DELETE FROM PostComment WHERE comment_id = ?";
-      const [result] = await db.execute(query, [comment_id]);      
+      const [result] = await db.execute(query, [comment_id]);
       return result.affectedRows > 0;
     } catch (error) {
       throw error;
