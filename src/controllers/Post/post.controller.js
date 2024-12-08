@@ -224,9 +224,9 @@ const listPost = async (req, res) => {
       );
       const media = await PostMedia.getAllMediaByPostId(post?.post_id);
       const reacts = await PostReact.getAllReactByPost(post?.post_id);
-      const infor_group = await GroupChannel.getGroupByGroupId(
-        postGroup?.group_id
-      );
+      const infor_group = postGroup?.group_id
+        ? await GroupChannel.getGroupByGroupId(postGroup?.group_id)
+        : null;
       return {
         ...post, // Spread thông tin từ bài viết
         reacts,

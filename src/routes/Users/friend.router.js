@@ -3,10 +3,7 @@ import Authentication from "../../middlewares/authentication/authentication_toke
 import { Authorization } from "../../middlewares/authorization/authorization_token";
 import {
   acceptFriend,
-  blockFriend,
-  checkBlockFriend,
   createFriendRequest,
-  deleteBlockFriend,
   deleteFriend,
   getAllRequestorsByReceiverId,
   getCountManualFriend,
@@ -59,30 +56,6 @@ const FriendRouter = (router = Router()) => {
 
   //Lấy danh sách dob
   router.get("/list-dob", Authentication, Authorization, getDobFriends);
-
-  //tạo block
-  router.get(
-    "/create-block/:receiver_id",
-    Authentication,
-    Authorization,
-    blockFriend
-  );
-
-  //check block
-  router.get(
-    "/check-block/:receiver_id",
-    Authentication,
-    Authorization,
-    checkBlockFriend
-  );
-
-  //xoá block
-  router.delete(
-    "/delete-block/:receiver_id",
-    Authentication,
-    Authorization,
-    deleteBlockFriend
-  );
 
   return router;
 };

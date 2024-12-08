@@ -83,8 +83,6 @@ class Users {
 
   static async searchByNameOrNickName(keyword) {
     try {
-      console.log(keyword);
-
       const getUserByIdQuery =
         "SELECT user_id, user_name, user_nickname, user_email, user_status, user_gender, created_at, user_role, type_account FROM User WHERE user_name LIKE ? OR user_nickname LIKE ?";
       const searchParam = `%${keyword}%`;

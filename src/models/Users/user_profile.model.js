@@ -84,8 +84,6 @@ class UserProfile {
       updateUserProfileQuery += updates.join(",");
       updateUserProfileQuery += " WHERE user_id = ?";
       params.push(this.user_id);
-      console.log(updateUserProfileQuery, params);
-
       const [result] = await db.execute(updateUserProfileQuery, params);
       
       return result.affectedRows;

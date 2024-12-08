@@ -65,11 +65,12 @@ const listCommentByPost = async (req, res) => {
   const post_id = req.params.id;
 
   try {
+    if(!post_id) {
+      return res.status(400).json({ status: false, message: "Không thể xác định bài viết, có thể nó không còn tồi tại trên hệ thống" });
+    }
     const comments = await PostComment.getCommentsWithSubComments(post_id);
-
-    if (comments.length > 0) {
       res.status(200).json({ status: true, data: comments });
-    } 
+    
   } catch (error) {
     console.error("Error fetching comments:", error);
     res.status(500).json({

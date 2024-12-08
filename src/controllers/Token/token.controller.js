@@ -15,13 +15,13 @@ const deleteToken = async (req, res) => {
     const tokenExists = await Token.checkRefreshTokenByUserID(user_id);
     if (tokenExists) {
       await Token.delete(user_id);
-      res.clearCookie("accessToken"); // Thay đổi tên cookie tùy thuộc vào cấu hình của bạn
-      res.clearCookie("key_refresh_token_encode"); // Thay đổi tên cookie tùy thuộc vào cấu hình của bạn
-      res.clearCookie("refreshToken"); // Thay đổi tên cookie tùy thuộc vào cấu hình của bạn
-      res.status(204).send();
-    } else {
-      throw new Error("Không tìm thấy token cho người dùng này");
     }
+    res.clearCookie("accessToken"); // Thay đổi tên cookie tùy thuộc vào cấu hình của bạn
+    res.clearCookie("key_refresh_token_encode"); // Thay đổi tên cookie tùy thuộc vào cấu hình của bạn
+    res.clearCookie("refreshToken"); // Thay đổi tên cookie tùy thuộc vào cấu hình của bạn
+    res.status(200).json({
+      status: true,
+    });
   } catch (error) {
     res.status(400).json({ status: false, message: error.message });
   }
