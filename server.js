@@ -49,5 +49,8 @@ server.listen(port, () => {
   console.log("Máy chủ Vibe đang chạy trên cổng:", port);
 });
 
+app.get('/', (req, res) => {
+  res.send('Welcome to Vibe Server');
+})
 // Router API
 app.use("/api", RouterAPI(express.Router()));
