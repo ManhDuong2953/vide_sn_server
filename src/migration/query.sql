@@ -20,7 +20,7 @@ CREATE TABLE
     UserKeysPair (
         user_id VARCHAR(255),
         public_key TEXT,
-        private_key_decode TEXT,
+        private_key_encrypt TEXT,
         FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 

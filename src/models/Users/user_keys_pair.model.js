@@ -23,7 +23,10 @@ class UserKeysPair {
         });
 
 
+
         const privateKeyEncode = encryptAES(privateKey, code);
+        console.log(privateKeyEncode);
+
         const createKeyPairQuery =
           "INSERT INTO UserKeysPair (user_id, public_key, private_key_encrypt) VALUES(?,?,?)";
 
@@ -131,9 +134,9 @@ class UserKeysPair {
   static async checkPrivateKey(user_id, code) {
     try {
       const keyPair = await this.getKeyPair(user_id);
-      
+
       if (keyPair) {
-          const privateKeyDecode = decryptAES(keyPair.private_key_encrypt, code);
+        const privateKeyDecode = decryptAES(keyPair.private_key_encrypt, code);
         if (privateKeyDecode !== null) {
           return {
             private_key: privateKeyDecode,
