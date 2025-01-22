@@ -65,12 +65,12 @@ const listCommentByPost = async (req, res) => {
   const post_id = req.params.id;
 
   try {
-    if(!post_id) {
+    if (!post_id) {
       return res.status(400).json({ status: false, message: "Không thể xác định bài viết, có thể nó không còn tồi tại trên hệ thống" });
     }
     const comments = await PostComment.getCommentsWithSubComments(post_id);
-      res.status(200).json({ status: true, data: comments });
-    
+    res.status(200).json({ status: true, data: comments });
+
   } catch (error) {
     console.error("Error fetching comments:", error);
     res.status(500).json({
@@ -85,8 +85,7 @@ const heartCommentByPost = async (req, res) => {
 
   try {
     const comments = await PostComment.updateCommentHeart(comment_id);
-
-    if (comments.length > 0) {
+    if (comments) {
       res.status(200).json({ status: true });
     } else {
       res.status(404).json({ status: false });
@@ -128,7 +127,7 @@ const deleteCommentPost = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    
+
     res.status(500).json({
       status: false,
       message: "An error occurred, please try again later",
