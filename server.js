@@ -18,10 +18,21 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 const port = process.env.PORT || 8080;
-const hostClient = process.env.HOST || "http://localhost:3000";
+const whitelist = [
+  process.env.HOST,
+  "https://2354-1-53-222-118.ngrok-free.app",
+  "http://localhost:3000",
+];
+
 app.use(
   cors({
-    origin: hostClient,
+    origin: function (origin, callback) {
+      if (!origin || whitelist.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
@@ -49,8 +60,8 @@ server.listen(port, () => {
   console.log("Máy chủ Vibe đang chạy trên cổng:", port);
 });
 
-app.get('/', (req, res) => {
-  res.send('Welcome to Vibe Server');
-})
+app.get("/", (req, res) => {
+  res.send("Welcome to Vibe Server");
+});
 // Router API
 app.use("/api", RouterAPI(express.Router()));
