@@ -1,4 +1,4 @@
-import Friend, { FriendBlock } from "../../models/Users/friend.model.js";
+import Friend from "../../models/Users/friend.model.js";
 import { Users } from "../../models/Users/user_account.model.js";
 
 // Tạo yêu cầu kết bạn
