@@ -5,7 +5,7 @@ import {
   generateRandomString,
   hashString,
   compareHash,
-} from "../../ultils/crypto";
+} from "../../ultils/crypto.js";
 
 class Users {
   constructor(data) {

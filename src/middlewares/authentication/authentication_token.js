@@ -4,7 +4,7 @@ import {
   decryptAESSame,
   encryptAES,
   generateRandomString,
-} from "../../ultils/crypto";
+} from "../../ultils/crypto.js";
 import dotenv from "dotenv";
 
 dotenv.config();

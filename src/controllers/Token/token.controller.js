@@ -3,7 +3,7 @@ import {
   decryptAES,
   encryptAES,
   generateRandomString,
-} from "../../ultils/crypto";
+} from "../../ultils/crypto.js";
 
 // Delete token
 const deleteToken = async (req, res) => {
