@@ -1,5 +1,4 @@
 import db from '../../configs/database/database.config.js';
-import { createPlayfairKey, playfairDecrypt } from '../../ultils/crypto.js';
 import { Users } from '../Users/user_account.model.js';
 
 
