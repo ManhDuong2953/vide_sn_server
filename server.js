@@ -38,7 +38,12 @@ const port = process.env.PORT || 8080;
 //   })
 // );
 
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors({
+  origin: (origin, callback) => {
+    callback(null, true);
+  },
+  credentials: true
+}));
 
 // Khởi tạo mảng người dùng
 let users = [];
