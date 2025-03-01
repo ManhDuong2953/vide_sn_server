@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Do an tot nghiep ",
   "main": "server.js",
-  "type": "module",
   "exports": {
     "./*": "./*/*.js"
   },

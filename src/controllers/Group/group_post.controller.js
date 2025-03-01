@@ -1,8 +1,8 @@
-import GroupChannel from "../../models/Group/group_channel.model";
-import GroupPost from "../../models/Group/group_post.model";
-import Post from "../../models/Post/post.model";
-import PostMedia from "../../models/Post/post_media.model";
-import PostReact from "../../models/Post/react_post.model";
+import GroupChannel from "../../models/Group/group_channel.model.js";
+import GroupPost from "../../models/Group/group_post.model.js";
+import Post from "../../models/Post/post.model.js";
+import PostMedia from "../../models/Post/post_media.model.js";
+import PostReact from "../../models/Post/react_post.model.js";
 
 const createGroupPost = async (req, res) => {
   const { post_id } = req.body;

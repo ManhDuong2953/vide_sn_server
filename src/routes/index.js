@@ -1,14 +1,14 @@
 import express from "express";
-import UserRouter from "./Users/index.router";
-import EmailOTPRouter from "./Email/email_otp.router";
-import TokenRouter from "./Token/token.router";
-import MessengerRouter from "./Message/messenger.router";
-import { GroupsRouter } from "./Group/index.router";
-import StoryRouter from "./Story/story.router";
-import PostRouter from "./Post/post.router";
-import MarketplaceRouter from "./Marketplace/marketplace.router";
-import SearchRouter from "./Search/index.router";
-import NoticeRouter from "./Notice/index.router";
+import UserRouter from "./Users/index.router.js";
+import EmailOTPRouter from "./Email/email_otp.router.js";
+import TokenRouter from "./Token/token.router.js";
+import MessengerRouter from "./Message/messenger.router.js";
+import { GroupsRouter } from "./Group/index.router.js";
+import StoryRouter from "./Story/story.router.js";
+import PostRouter from "./Post/post.router.js";
+import MarketplaceRouter from "./Marketplace/marketplace.router.js";
+import SearchRouter from "./Search/index.router.js";
+import NoticeRouter from "./Notice/index.router.js";
 
 export default function RouterAPI(app) {
   app.use("/users", UserRouter(express.Router()));

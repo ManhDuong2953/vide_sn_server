@@ -1,12 +1,12 @@
-import uploadFile from "../../configs/cloud/cloudinary.config";
-import db from "../../configs/database/database.config";
-import GroupChannel from "../../models/Group/group_channel.model";
-import GroupPost from "../../models/Group/group_post.model";
-import PostComment from "../../models/Post/comment_post.model";
-import Post from "../../models/Post/post.model";
-import PostMedia from "../../models/Post/post_media.model";
-import PostReact from "../../models/Post/react_post.model";
-import UserPost from "../../models/Post/user_post.model";
+import uploadFile from "../../configs/cloud/cloudinary.config.js";
+import db from "../../configs/database/database.config.js";
+import GroupChannel from "../../models/Group/group_channel.model.js";
+import GroupPost from "../../models/Group/group_post.model.js";
+import PostComment from "../../models/Post/comment_post.model.js";
+import Post from "../../models/Post/post.model.js";
+import PostMedia from "../../models/Post/post_media.model.js";
+import PostReact from "../../models/Post/react_post.model.js";
+import UserPost from "../../models/Post/user_post.model.js";
 
 // tạo bài viết
 const createPost = async (req, res) => {

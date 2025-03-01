@@ -1,7 +1,7 @@
-import uploadFile from "../../configs/cloud/cloudinary.config";
-import Story from "../../models/Story/story.model";
-import { ProfileMedia } from "../../models/Users/profile_media.model";
-import { Users } from "../../models/Users/user_account.model";
+import uploadFile from "../../configs/cloud/cloudinary.config.js";
+import Story from "../../models/Story/story.model.js";
+import { ProfileMedia } from "../../models/Users/profile_media.model.js";
+import { Users } from "../../models/Users/user_account.model.js";
 
 // tạo tin
 const createStory = async (req, res) => {

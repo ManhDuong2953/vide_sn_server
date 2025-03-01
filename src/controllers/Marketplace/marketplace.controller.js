@@ -1,8 +1,8 @@
-import { Marketplace } from "../../models/Marketplace/marketplace.model";
-import { MarketplaceMedia } from "../../models/Marketplace/marketplace_media.model";
-import uploadFile from "../../configs/cloud/cloudinary.config";
-import { Users } from "../../models/Users/user_account.model";
-import { ProfileMedia } from "../../models/Users/profile_media.model";
+import { Marketplace } from "../../models/Marketplace/marketplace.model.js";
+import { MarketplaceMedia } from "../../models/Marketplace/marketplace_media.model.js";
+import uploadFile from "../../configs/cloud/cloudinary.config.js";
+import { Users } from "../../models/Users/user_account.model.js";
+import { ProfileMedia } from "../../models/Users/profile_media.model.js";
 // Thêm sản phẩm mới
 export async function createProduct(req, res) {
   try {

@@ -1,4 +1,4 @@
-import { UserKeysPair } from "../../models/Users/user_keys_pair.model";
+import { UserKeysPair } from "../../models/Users/user_keys_pair.model.js";
 
 const checkExistKeyPair = async (req, res) => {
   try {

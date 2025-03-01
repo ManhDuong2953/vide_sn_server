@@ -7,8 +7,8 @@ import {
   getAllConversations,
   getAllMessages,
 } from "../../controllers/Message/messenger.controller";
-import { Authorization } from "../../middlewares/authorization/authorization_token";
-import Authentication from "../../middlewares/authentication/authentication_token";
+import { Authorization } from "../../middlewares/authorization/authorization_token.js";
+import Authentication from "../../middlewares/authentication/authentication_token.js";
 import multer from "multer";
 // Cấu hình Multer để xử lý nhiều trường ảnh
 const storage = multer.memoryStorage(); // Bạn có thể thay đổi sang multer.diskStorage() nếu cần

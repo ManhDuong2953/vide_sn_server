@@ -1,6 +1,6 @@
 import { generateKeyPairSync } from "crypto";
-import db from "../../configs/database/database.config";
-import { decryptAES, encryptAES } from "../../ultils/crypto";
+import db from "../../configs/database/database.config.js";
+import { decryptAES, encryptAES } from "../../ultils/crypto.js";
 
 class UserKeysPair {
   constructor(data) {

@@ -1,9 +1,9 @@
 import express from "express";
-import Authentication from "../../middlewares/authentication/authentication_token";
-import { Authorization } from "../../middlewares/authorization/authorization_token";
-import { searchUserByNameOrNickname } from "../../controllers/Users/index.controller";
-import { searchGroupChannel } from "../../controllers/Group/group_channel.controller";
-import { listPostBySearch } from "../../controllers/Post/post.controller";
+import Authentication from "../../middlewares/authentication/authentication_token.js";
+import { Authorization } from "../../middlewares/authorization/authorization_token.js";
+import { searchUserByNameOrNickname } from "../../controllers/Users/index.controller.js";
+import { searchGroupChannel } from "../../controllers/Group/group_channel.controller.js";
+import { listPostBySearch } from "../../controllers/Post/post.controller.js";
 const router = express.Router();
 
 export default function SearchRouter() {

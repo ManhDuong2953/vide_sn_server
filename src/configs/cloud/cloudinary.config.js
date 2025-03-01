@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import { generateId } from "../../ultils/crypto";
+import { generateId } from "../../ultils/crypto.js";
 require("dotenv").config();
 
 cloudinary.config({

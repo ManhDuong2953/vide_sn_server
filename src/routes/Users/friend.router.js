@@ -1,6 +1,6 @@
 import { Router } from "express";
-import Authentication from "../../middlewares/authentication/authentication_token";
-import { Authorization } from "../../middlewares/authorization/authorization_token";
+import Authentication from "../../middlewares/authentication/authentication_token.js";
+import { Authorization } from "../../middlewares/authorization/authorization_token.js";
 import {
   acceptFriend,
   createFriendRequest,

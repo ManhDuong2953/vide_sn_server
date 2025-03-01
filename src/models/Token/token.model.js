@@ -1,6 +1,6 @@
-import db from '../../configs/database/database.config';
-import { createPlayfairKey, playfairDecrypt } from '../../ultils/crypto';
-import { Users } from '../Users/user_account.model';
+import db from '../../configs/database/database.config.js';
+import { createPlayfairKey, playfairDecrypt } from '../../ultils/crypto.js';
+import { Users } from '../Users/user_account.model.js';
 
 
 const jwt = require('jsonwebtoken');

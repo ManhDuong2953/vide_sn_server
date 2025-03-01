@@ -1,8 +1,8 @@
-import { io, users } from "../../server"; // Đảm bảo đúng đường dẫn
-import { getSocketIdByUserId } from "../configs/socketIO/socketManager";
-import Notice from "../models/Notice/notice.model";
-import { ProfileMedia } from "../models/Users/profile_media.model";
-import { Users } from "../models/Users/user_account.model";
+import { io, users } from "../../server.js"; // Đảm bảo đúng đường dẫn
+import { getSocketIdByUserId } from "../configs/socketIO/socketManager.js";
+import Notice from "../models/Notice/notice.model.js";
+import { ProfileMedia } from "../models/Users/profile_media.model.js";
+import { Users } from "../models/Users/user_account.model.js";
 
 export const sendNoticeToFriends = async (
   sender_id,

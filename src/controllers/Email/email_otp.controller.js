@@ -1,5 +1,5 @@
-import { EmailOTP } from "../../models/Email/email_otp.model";
-import { Users } from "../../models/Users/user_account.model";
+import { EmailOTP } from "../../models/Email/email_otp.model.js";
+import { Users } from "../../models/Users/user_account.model.js";
 
 // Tạo mã OTP
 const createOTPEmail = async (req, res) => {

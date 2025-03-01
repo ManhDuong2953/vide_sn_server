@@ -1,4 +1,4 @@
-import ProfileHeart from "../../models/Users/profile_heart.model";
+import ProfileHeart from "../../models/Users/profile_heart.model.js";
 
 export const createProfileHeart = async (req, res) => {
     try {

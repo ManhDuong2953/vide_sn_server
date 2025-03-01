@@ -1,5 +1,5 @@
-import Friend, { FriendBlock } from "../../models/Users/friend.model";
-import { Users } from "../../models/Users/user_account.model";
+import Friend, { FriendBlock } from "../../models/Users/friend.model.js";
+import { Users } from "../../models/Users/user_account.model.js";
 
 // Tạo yêu cầu kết bạn
 export const createFriendRequest = async (req, res) => {

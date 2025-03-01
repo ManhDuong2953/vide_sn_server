@@ -1,6 +1,6 @@
-import uploadFile from "../../configs/cloud/cloudinary.config";
-import Post from "../../models/Post/post.model";
-import SubPostComment from "../../models/Post/sub_comment_post.model";
+import uploadFile from "../../configs/cloud/cloudinary.config.js";
+import Post from "../../models/Post/post.model.js";
+import SubPostComment from "../../models/Post/sub_comment_post.model.js";
 
 // Tạo bình luận cấp 2
 const createSubCommentByCommentId = async (req, res) => {

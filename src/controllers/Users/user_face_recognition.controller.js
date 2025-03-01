@@ -1,7 +1,7 @@
-import uploadFile from "../../configs/cloud/cloudinary.config";
-import { Users } from "../../models/Users/user_account.model";
-import { UserFaceData } from "../../models/Users/user_face_recognition.model";
-import { decryptAESSame, encryptAES, encryptAESSame } from "../../ultils/crypto";
+import uploadFile from "../../configs/cloud/cloudinary.config.js";
+import { Users } from "../../models/Users/user_account.model.js";
+import { UserFaceData } from "../../models/Users/user_face_recognition.model.js";
+import { decryptAESSame, encryptAES, encryptAESSame } from "../../ultils/crypto.js";
 require("dotenv").config();
 // Create user face data
 

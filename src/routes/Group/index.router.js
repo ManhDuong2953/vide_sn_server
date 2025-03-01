@@ -1,8 +1,8 @@
 import { Router } from "express";
 import express from 'express';
-import GroupChannelRouter from "./group_channel.router";
-import GroupMemberRouter from "./group_member.router";
-import GroupPostRouter from "./group_post.router";
+import GroupChannelRouter from "./group_channel.router.js";
+import GroupMemberRouter from "./group_member.router.js";
+import GroupPostRouter from "./group_post.router.js";
 
 export const GroupsRouter = (router = Router()) => {
   router.use("/channel", GroupChannelRouter(express.Router()));

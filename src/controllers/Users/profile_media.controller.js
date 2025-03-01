@@ -1,4 +1,4 @@
-import { ProfileMedia } from "../../models/Users/profile_media.model";
+import { ProfileMedia } from "../../models/Users/profile_media.model.js";
 
 export const getAllProfileMediaByIdUser = async (req, res) => {
   try {

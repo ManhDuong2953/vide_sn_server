@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { blockFriend, checkBlockFriend, deleteBlockFriend } from "../../controllers/Users/friend_block.controller";
-import Authentication from "../../middlewares/authentication/authentication_token";
-import { Authorization } from "../../middlewares/authorization/authorization_token";
+import { blockFriend, checkBlockFriend, deleteBlockFriend } from "../../controllers/Users/friend_block.controller.js";
+import Authentication from "../../middlewares/authentication/authentication_token.js";
+import { Authorization } from "../../middlewares/authorization/authorization_token.js";
 
 // Cấu hình router
 const FriendBlockRouter = (router = Router()) => {

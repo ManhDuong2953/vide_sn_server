@@ -6,8 +6,8 @@ import {
   deleteNotice,
   listNoticesByUser,
 } from "../../controllers/Notice/notice.controller";
-import Authentication from "../../middlewares/authentication/authentication_token";
-import { Authorization } from "../../middlewares/authorization/authorization_token";
+import Authentication from "../../middlewares/authentication/authentication_token.js";
+import { Authorization } from "../../middlewares/authorization/authorization_token.js";
 
 export default function NoticeRouter(router = Router()) {
   router.post("/create-notice", Authentication, Authorization, createNotice);

@@ -1,4 +1,4 @@
-import { Token } from "../../models/Token/token.model";
+import { Token } from "../../models/Token/token.model.js";
 import {
   decryptAES,
   encryptAES,

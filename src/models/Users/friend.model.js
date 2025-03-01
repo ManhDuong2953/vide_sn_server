@@ -1,5 +1,5 @@
-import db from "../../configs/database/database.config";
-import { ProfileMedia } from "./profile_media.model";
+import db from "../../configs/database/database.config.js";
+import { ProfileMedia } from "./profile_media.model.js";
 
 class Friend {
   constructor(data) {

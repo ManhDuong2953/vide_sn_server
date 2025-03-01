@@ -1,5 +1,5 @@
-import { Token } from "../../models/Token/token.model";
-import { Users } from "../../models/Users/user_account.model";
+import { Token } from "../../models/Token/token.model.js";
+import { Users } from "../../models/Users/user_account.model.js";
 import {
   decryptAESSame,
   encryptAES,

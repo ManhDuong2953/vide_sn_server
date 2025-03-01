@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import Authentication from '../../middlewares/authentication/authentication_token';
-import { Authorization } from '../../middlewares/authorization/authorization_token';
-import { createProfileHeart, getProfileHeartsByUserId, removeProfileHeart } from '../../controllers/Users/profile_heart.controller';
+import Authentication from '../../middlewares/authentication/authentication_token.js';
+import { Authorization } from '../../middlewares/authorization/authorization_token.js';
+import { createProfileHeart, getProfileHeartsByUserId, removeProfileHeart } from '../../controllers/Users/profile_heart.controller.js';
 
 // Cấu hình router
 const ProfileHeartRouter = (router = Router()) => {

@@ -1,21 +1,21 @@
 import { Router } from "express";
-import UserAccountRouter from "./user_account.router";
+import UserAccountRouter from "./user_account.router.js";
 import express from "express";
-import Authentication from "../../middlewares/authentication/authentication_token";
-import { Authorization } from "../../middlewares/authorization/authorization_token";
+import Authentication from "../../middlewares/authentication/authentication_token.js";
+import { Authorization } from "../../middlewares/authorization/authorization_token.js";
 import {
   getInfoProfileUser,
   uploadInfoProfileUser,
 } from "../../controllers/Users/index.controller";
 
 import multer from "multer";
-import UserSettingRouter from "./user_setting.router";
-import UserFaceRecognitionRouter from "./user_face_recognition.router";
-import FriendRouter from "./friend.router";
-import FriendBlockRouter from "./friend_block.router";
-import ProfileHeartRouter from "./profile_heart.router";
-import UserKeysPairRouter from "./user_keys_pair.router";
-import ProfileMediaRouter from "./profile_media.router";
+import UserSettingRouter from "./user_setting.router.js";
+import UserFaceRecognitionRouter from "./user_face_recognition.router.js";
+import FriendRouter from "./friend.router.js";
+import FriendBlockRouter from "./friend_block.router.js";
+import ProfileHeartRouter from "./profile_heart.router.js";
+import UserKeysPairRouter from "./user_keys_pair.router.js";
+import ProfileMediaRouter from "./profile_media.router.js";
 // Cấu hình Multer để xử lý nhiều trường ảnh
 const storage = multer.memoryStorage(); // Bạn có thể thay đổi sang multer.diskStorage() nếu cần
 const upload = multer({ storage });

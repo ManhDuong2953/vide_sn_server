@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { getUserSettingById, updateUserSetting } from '../../controllers/Users/user_setting.controller';
-import Authentication from '../../middlewares/authentication/authentication_token';
-import { Authorization } from '../../middlewares/authorization/authorization_token';
+import { getUserSettingById, updateUserSetting } from '../../controllers/Users/user_setting.controller.js';
+import Authentication from '../../middlewares/authentication/authentication_token.js';
+import { Authorization } from '../../middlewares/authorization/authorization_token.js';
 
 // Cấu hình router
 const UserSettingRouter = (router = Router()) => {

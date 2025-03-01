@@ -9,7 +9,7 @@ import {
   deleteUser,
   createUsersBySocialAccount,
 } from "../../controllers/Users/user_account.controller";
-import Authentication from "../../middlewares/authentication/authentication_token";
+import Authentication from "../../middlewares/authentication/authentication_token.js";
 
 // Cấu hình router
 const UserAccountRouter = (router = Router()) => {

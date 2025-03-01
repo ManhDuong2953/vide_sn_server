@@ -1,5 +1,5 @@
-import db from "../../configs/database/database.config";
-import { generateId } from "../../ultils/crypto";
+import db from "../../configs/database/database.config.js";
+import { generateId } from "../../ultils/crypto.js";
 
 class Marketplace {
   constructor(data) {

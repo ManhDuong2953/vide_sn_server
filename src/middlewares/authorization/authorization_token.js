@@ -1,6 +1,6 @@
-import GroupChannel from "../../models/Group/group_channel.model";
-import GroupMember from "../../models/Group/group_member.model";
-import convertFalsyValues from "../convertFalsy/convertFalsy";
+import GroupChannel from "../../models/Group/group_channel.model.js";
+import GroupMember from "../../models/Group/group_member.model.js";
+import convertFalsyValues from "../convertFalsy/convertFalsy.js";
 
 const jwt = require("jsonwebtoken");
 require("dotenv").config();

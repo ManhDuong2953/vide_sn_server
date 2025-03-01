@@ -1,4 +1,4 @@
-import { createOTPEmail, createOTPEmailExisted, createOTPEmailLink, verifyOTPEmail } from "../../controllers/Email/email_otp.controller";
+import { createOTPEmail, createOTPEmailExisted, createOTPEmailLink, verifyOTPEmail } from "../../controllers/Email/email_otp.controller.js";
 
  const EmailOTPRouter = (router) => {
     router.post('/create', createOTPEmailExisted);

@@ -1,5 +1,5 @@
-import db from "../../configs/database/database.config";
-import { cleanString } from "../../ultils/create_nickname";
+import db from "../../configs/database/database.config.js";
+import { cleanString } from "../../ultils/create_nickname.js";
 import {
   generateId,
   generateRandomString,

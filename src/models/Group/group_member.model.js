@@ -1,5 +1,5 @@
-import db from "../../configs/database/database.config";
-import GroupChannel from "./group_channel.model";
+import db from "../../configs/database/database.config.js";
+import GroupChannel from "./group_channel.model.js";
 
 class GroupMember extends GroupChannel {
   constructor(data) {

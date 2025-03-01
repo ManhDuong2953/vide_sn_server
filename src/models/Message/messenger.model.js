@@ -1,6 +1,6 @@
-  import db from "../../configs/database/database.config";
-  import { encryptWithPublicKey } from "../../ultils/crypto";
-  import { UserKeysPair } from "../Users/user_keys_pair.model";
+  import db from "../../configs/database/database.config.js";
+  import { encryptWithPublicKey } from "../../ultils/crypto.js";
+  import { UserKeysPair } from "../Users/user_keys_pair.model.js";
 
   class Message {
     constructor(data) {

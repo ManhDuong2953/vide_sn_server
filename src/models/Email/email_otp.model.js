@@ -1,7 +1,7 @@
-import db from "../../configs/database/database.config";
-import sendMail from "../../configs/emailSTMT/email.config";
-import { generateRandomString } from "../../ultils/crypto";
-import { Users } from "../Users/user_account.model";
+import db from "../../configs/database/database.config.js";
+import sendMail from "../../configs/emailSTMT/email.config.js";
+import { generateRandomString } from "../../ultils/crypto.js";
+import { Users } from "../Users/user_account.model.js";
 
 
 class EmailOTP {

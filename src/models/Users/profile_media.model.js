@@ -1,4 +1,4 @@
-import db from "../../configs/database/database.config";
+import db from "../../configs/database/database.config.js";
 
 class ProfileMedia {
     constructor(data) {

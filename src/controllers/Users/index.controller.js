@@ -1,8 +1,8 @@
-import uploadFile from "../../configs/cloud/cloudinary.config";
-import { ProfileMedia } from "../../models/Users/profile_media.model";
-import { Users } from "../../models/Users/user_account.model";
-import { UserProfile } from "../../models/Users/user_profile.model";
-import { UserSetting } from "../../models/Users/user_setting.model";
+import uploadFile from "../../configs/cloud/cloudinary.config.js";
+import { ProfileMedia } from "../../models/Users/profile_media.model.js";
+import { Users } from "../../models/Users/user_account.model.js";
+import { UserProfile } from "../../models/Users/user_profile.model.js";
+import { UserSetting } from "../../models/Users/user_setting.model.js";
 require("dotenv").config();
 export async function getInfoProfileUser(req, res) {
   try {

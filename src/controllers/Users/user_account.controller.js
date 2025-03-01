@@ -1,7 +1,7 @@
-import { ProfileMedia } from "../../models/Users/profile_media.model";
-import { Users } from "../../models/Users/user_account.model";
-import { UserProfile } from "../../models/Users/user_profile.model";
-import { UserSetting } from "../../models/Users/user_setting.model";
+import { ProfileMedia } from "../../models/Users/profile_media.model.js";
+import { Users } from "../../models/Users/user_account.model.js";
+import { UserProfile } from "../../models/Users/user_profile.model.js";
+import { UserSetting } from "../../models/Users/user_setting.model.js";
 //Users role
 // Create a user
 const createUsers = async (req, res) => {

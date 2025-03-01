@@ -1,8 +1,8 @@
-import { io, users } from "../../../server";
-import uploadFile from "../../configs/cloud/cloudinary.config";
-import { getSocketIdByUserId } from "../../configs/socketIO/socketManager";
-import Message from "../../models/Message/messenger.model";
-import { decryptWithPrivateKey } from "../../ultils/crypto";
+import { io, users } from "../../../server.js";
+import uploadFile from "../../configs/cloud/cloudinary.config.js";
+import { getSocketIdByUserId } from "../../configs/socketIO/socketManager.js";
+import Message from "../../models/Message/messenger.model.js";
+import { decryptWithPrivateKey } from "../../ultils/crypto.js";
 require("dotenv").config();
 const createMessage = async (req, res) => {
   try {

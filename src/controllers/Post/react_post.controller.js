@@ -1,7 +1,7 @@
-import Post from "../../models/Post/post.model";
-import PostReact from "../../models/Post/react_post.model";
-import Friend from "../../models/Users/friend.model";
-import { sendNoticeToFriends } from "../../ultils/socket_notice";
+import Post from "../../models/Post/post.model.js";
+import PostReact from "../../models/Post/react_post.model.js";
+import Friend from "../../models/Users/friend.model.js";
+import { sendNoticeToFriends } from "../../ultils/socket_notice.js";
 
 // Thả tim bài viết
 const createReactPostById = async (req, res) => {

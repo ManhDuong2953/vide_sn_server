@@ -1,5 +1,5 @@
-import { Users } from "../../models/Users/user_account.model";
-import { FriendBlock } from "../../models/Users/friend_block.model";
+import { Users } from "../../models/Users/user_account.model.js";
+import { FriendBlock } from "../../models/Users/friend_block.model.js";
 
 // Block bạn bè
 export const blockFriend = async (req, res) => {

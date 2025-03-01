@@ -1,5 +1,5 @@
-import GroupChannel from "../../models/Group/group_channel.model";
-import GroupMember from "../../models/Group/group_member.model";
+import GroupChannel from "../../models/Group/group_channel.model.js";
+import GroupMember from "../../models/Group/group_member.model.js";
 
 export const getGroupsByUserID = async (req, res) => {
   try {

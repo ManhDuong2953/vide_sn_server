@@ -1,5 +1,5 @@
-import Notice from "../../models/Notice/notice.model";
-import { ProfileMedia } from "../../models/Users/profile_media.model";
+import Notice from "../../models/Notice/notice.model.js";
+import { ProfileMedia } from "../../models/Users/profile_media.model.js";
 
 // Thêm thông báo mới
 const createNotice = async (req, res) => {

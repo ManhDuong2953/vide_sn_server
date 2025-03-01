@@ -1,6 +1,6 @@
-import db from "../../configs/database/database.config";
-import { generateId } from "../../ultils/crypto";
-import GroupMember from "./group_member.model";
+import db from "../../configs/database/database.config.js";
+import { generateId } from "../../ultils/crypto.js";
+import GroupMember from "./group_member.model.js";
 
 class GroupPost {
   constructor(data) {

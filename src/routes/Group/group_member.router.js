@@ -4,7 +4,7 @@ import {
   Authorization,
   checkRoleGroup,
 } from "../../middlewares/authorization/authorization_token";
-import Authentication from "../../middlewares/authentication/authentication_token";
+import Authentication from "../../middlewares/authentication/authentication_token.js";
 import {
   acceptInviteByMember,
   checkRoleMember,

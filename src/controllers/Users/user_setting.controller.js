@@ -1,4 +1,4 @@
-import { UserSetting } from "../../models/Users/user_setting.model";
+import { UserSetting } from "../../models/Users/user_setting.model.js";
 
 // Get a user setting by ID
 const getUserSettingById = async (req, res) => {
