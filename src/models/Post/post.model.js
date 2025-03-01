@@ -81,7 +81,7 @@ class Post {
       FROM 
           Post p
       JOIN 
-          user u ON p.user_id = u.user_id
+          User u ON p.user_id = u.user_id
       LEFT JOIN (
           SELECT 
               user_id, 
@@ -135,7 +135,7 @@ class Post {
       FROM 
         Post p
       JOIN 
-        user u ON p.user_id = u.user_id
+        User u ON p.user_id = u.user_id
       LEFT JOIN (
         SELECT 
           user_id, 

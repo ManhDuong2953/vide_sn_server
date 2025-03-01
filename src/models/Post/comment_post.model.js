@@ -71,10 +71,10 @@ class PostComment {
                     su.user_name AS replying_user_name,
                     la.media_link AS replying_user_avatar
                 FROM PostComment c
-                LEFT JOIN user u ON c.commenting_user_id = u.user_id
+                LEFT JOIN User u ON c.commenting_user_id = u.user_id
                 LEFT JOIN LatestProfileMedia lpm ON c.commenting_user_id = lpm.user_id AND lpm.rn = 1 -- Sửa chỗ này
                 LEFT JOIN SubPostComment sc ON c.comment_id = sc.comment_id
-                LEFT JOIN user su ON sc.replying_user_id = su.user_id
+                LEFT JOIN User su ON sc.replying_user_id = su.user_id
                 LEFT JOIN LatestProfileMedia la ON sc.replying_user_id = la.user_id AND la.rn = 1
                 WHERE c.post_id = ?
                 ORDER BY c.created_at DESC, sc.created_at ASC;

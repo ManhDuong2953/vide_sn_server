@@ -212,7 +212,7 @@ static async deleteMessageByMessageIDOwnSide(user_id, messenger_id) {
                                                     GROUP BY LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id)
                                                 )
                                         ) AS msg
-                                        JOIN user u 
+                                        JOIN User u 
                                           ON (u.user_id = msg.sender_id OR u.user_id = msg.receiver_id) 
                                           AND u.user_id != ?
                                         LEFT JOIN (
