@@ -3,7 +3,7 @@ import { Router } from "express";
 import {
   Authorization,
   checkRoleGroup,
-} from "../../middlewares/authorization/authorization_token";
+} from "../../middlewares/authorization/authorization_token.js";
 import Authentication from "../../middlewares/authentication/authentication_token.js";
 import {
   acceptInviteByMember,
