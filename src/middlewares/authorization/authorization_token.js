@@ -3,7 +3,8 @@ import GroupMember from "../../models/Group/group_member.model.js";
 import convertFalsyValues from "../convertFalsy/convertFalsy.js";
 
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 
 export async function Authorization(req, res, next) {
   try {

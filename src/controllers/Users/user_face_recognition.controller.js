@@ -2,7 +2,8 @@ import uploadFile from "../../configs/cloud/cloudinary.config.js";
 import { Users } from "../../models/Users/user_account.model.js";
 import { UserFaceData } from "../../models/Users/user_face_recognition.model.js";
 import { decryptAESSame, encryptAES, encryptAESSame } from "../../ultils/crypto.js";
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 // Create user face data
 
 const createUserFaceData = async (req, res) => {

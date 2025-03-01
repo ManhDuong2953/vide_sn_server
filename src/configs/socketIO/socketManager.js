@@ -1,6 +1,7 @@
 import { Server } from "socket.io"; // Đảm bảo import đúng Server từ socket.io
 import db from "../database/database.config.js";
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 
 let io; // Biến để lưu instance của socket.io
 const initializeSocket = (httpServer, users) => {

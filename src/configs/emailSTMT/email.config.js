@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 const sendMail = async (email, otp, type) => {
     const transporter = nodemailer.createTransport({
         host: 'smtp.ethereal.email',

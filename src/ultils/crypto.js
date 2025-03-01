@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import bcrypt from 'bcrypt';
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 const CryptoJS = require("crypto-js");
 
 //Tạo random String với 8 ký tự

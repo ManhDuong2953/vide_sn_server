@@ -3,7 +3,8 @@ import uploadFile from "../../configs/cloud/cloudinary.config.js";
 import { getSocketIdByUserId } from "../../configs/socketIO/socketManager.js";
 import Message from "../../models/Message/messenger.model.js";
 import { decryptWithPrivateKey } from "../../ultils/crypto.js";
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 const createMessage = async (req, res) => {
   try {
     const files = req.files || {};

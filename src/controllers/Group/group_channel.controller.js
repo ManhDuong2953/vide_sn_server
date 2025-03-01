@@ -1,7 +1,8 @@
 import uploadFile from "../../configs/cloud/cloudinary.config.js";
 import GroupChannel from "../../models/Group/group_channel.model.js";
 import GroupMember from "../../models/Group/group_member.model.js";
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 
 const createGroupChannel = async (req, res) => {
   const { group_name, group_slogan, group_privacy } = req.body;

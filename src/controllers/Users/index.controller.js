@@ -3,7 +3,8 @@ import { ProfileMedia } from "../../models/Users/profile_media.model.js";
 import { Users } from "../../models/Users/user_account.model.js";
 import { UserProfile } from "../../models/Users/user_profile.model.js";
 import { UserSetting } from "../../models/Users/user_setting.model.js";
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 export async function getInfoProfileUser(req, res) {
   try {
     const id = req.params.id ?? req.body?.data?.user_id;
