@@ -1,5 +1,5 @@
 import express from "express";
-import RouterAPI from "./src/routes/index";
+import RouterAPI from "./src/routes/index.js";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { ExpressPeerServer } from "peer";
@@ -22,6 +22,7 @@ const whitelist = [
   process.env.HOST,
   "https://2354-1-53-222-118.ngrok-free.app",
   "http://localhost:3000",
+  "*"
 ];
 
 app.use(
