@@ -29,7 +29,7 @@ class PostReact {
   }
   static async getAllReactByPost(post_id) {
     const query = `
-    Select * from postreact where post_id = ?
+    SELECT * FROM PostReact WHERE post_id = ?
   `;
 
     try {
