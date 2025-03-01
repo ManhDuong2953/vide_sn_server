@@ -2,6 +2,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { generateId } from "../../ultils/crypto.js";
 import dotenv from "dotenv";
 dotenv.config();
+import { Readable } from "stream";
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -43,7 +44,7 @@ const uploadFile = async (file, folder) => {
         }
       );
 
-      require("stream").Readable.from(file.buffer).pipe(uploadStream);
+      Readable.from(file.buffer).pipe(uploadStream);
     });
 
     return {

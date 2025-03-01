@@ -2,9 +2,11 @@ import db from '../../configs/database/database.config.js';
 import { Users } from '../Users/user_account.model.js';
 
 
-const jwt = require('jsonwebtoken');
+import jwt from "jsonwebtoken";
 
-require('dotenv').config();
+import dotenv from "dotenv";
+dotenv.config();
+
 const SECRET_KEY = process.env.SECRET_KEY;
 
 class Token extends Users {
