@@ -18,25 +18,27 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 const port = process.env.PORT || 8080;
-const whitelist = [
-  process.env.HOST,
-  "https://2354-1-53-222-118.ngrok-free.app",
-  "http://localhost:3000",
-  "*"
-];
+//   const whitelist = [
+//     process.env.HOST,
+//     "https://2354-1-53-222-118.ngrok-free.app",
+//     "http://localhost:3000",
+//     "*"
+//   ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || whitelist.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       if (!origin || whitelist.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true,
+//   })
+// );
+
+app.use(cors({ origin: "*", credentials: true }));
 
 // Khởi tạo mảng người dùng
 let users = [];
