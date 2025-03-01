@@ -8,7 +8,7 @@ import {
   updateUserPassword,
   deleteUser,
   createUsersBySocialAccount,
-} from "../../controllers/Users/user_account.controller";
+} from "../../controllers/Users/user_account.controller.js";
 import Authentication from "../../middlewares/authentication/authentication_token.js";
 
 // Cấu hình router

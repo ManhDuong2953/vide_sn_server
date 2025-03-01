@@ -6,7 +6,7 @@ import { Authorization } from "../../middlewares/authorization/authorization_tok
 import {
   getInfoProfileUser,
   uploadInfoProfileUser,
-} from "../../controllers/Users/index.controller";
+} from "../../controllers/Users/index.controller.js";
 
 import multer from "multer";
 import UserSettingRouter from "./user_setting.router.js";

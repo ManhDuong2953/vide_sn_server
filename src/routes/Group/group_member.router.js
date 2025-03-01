@@ -16,7 +16,7 @@ import {
   refuseInviteByMember,
   sendInviteByMember,
   setAdminGroup,
-} from "../../controllers/Group/group_member.controller";
+} from "../../controllers/Group/group_member.controller.js";
 // Cấu hình router
 const GroupMemberRouter = (router = Router()) => {
   router.get(

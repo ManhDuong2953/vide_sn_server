@@ -11,7 +11,7 @@ import {
   getFriends,
   getListSuggest,
   statusFriend,
-} from "../../controllers/Users/friend.controller";
+} from "../../controllers/Users/friend.controller.js";
 
 // Cấu hình router
 const FriendRouter = (router = Router()) => {

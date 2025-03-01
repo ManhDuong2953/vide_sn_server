@@ -6,7 +6,7 @@ import {
   deleteMessengerByOwnerSide,
   getAllConversations,
   getAllMessages,
-} from "../../controllers/Message/messenger.controller";
+} from "../../controllers/Message/messenger.controller.js";
 import { Authorization } from "../../middlewares/authorization/authorization_token.js";
 import Authentication from "../../middlewares/authentication/authentication_token.js";
 import multer from "multer";

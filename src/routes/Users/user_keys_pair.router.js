@@ -7,7 +7,7 @@ import {
   checkSecretDeCryptoPrivateKey,
   createKeyPair,
   deleteKeysPair,
-} from "../../controllers/Users/user_keys_pair.controller";
+} from "../../controllers/Users/user_keys_pair.controller.js";
 
 // Cấu hình router
 const UserKeysPairRouter = (router = Router()) => {

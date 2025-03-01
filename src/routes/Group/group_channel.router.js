@@ -7,7 +7,7 @@ import {
   deleteGroup,
   getInfoGroupChannel,
   updateGroup,
-} from "../../controllers/Group/group_channel.controller";
+} from "../../controllers/Group/group_channel.controller.js";
 // Cấu hình Multer để xử lý nhiều trường ảnh
 const storage = multer.memoryStorage(); // Bạn có thể thay đổi sang multer.diskStorage() nếu cần
 const upload = multer({ storage });

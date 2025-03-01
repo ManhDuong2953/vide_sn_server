@@ -5,7 +5,7 @@ import {
   deleleAllNoticeCurrent,
   deleteNotice,
   listNoticesByUser,
-} from "../../controllers/Notice/notice.controller";
+} from "../../controllers/Notice/notice.controller.js";
 import Authentication from "../../middlewares/authentication/authentication_token.js";
 import { Authorization } from "../../middlewares/authorization/authorization_token.js";
 
