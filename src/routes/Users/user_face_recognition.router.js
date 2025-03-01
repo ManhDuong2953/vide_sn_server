@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createUserFaceData, deleteUserFaceData, getAllUserFaceData, getAllUserFaceDataByUserIDEncode, getUserFaceDataById, loginUserFaceData } from '../../controllers/Users/user_face_recognition.controller.js';
+import { createUserFaceData, deleteUserFaceData, getAllUserFaceDataByUserIDEncode, getUserFaceDataById, loginUserFaceData } from '../../controllers/Users/user_face_recognition.controller.js';
 import multer from 'multer';
 import Authentication from '../../middlewares/authentication/authentication_token.js';
 import { Authorization } from '../../middlewares/authorization/authorization_token.js';
