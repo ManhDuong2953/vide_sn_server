@@ -8,7 +8,7 @@ const checkExistKeyPair = async (req, res) => {
     if (result) {
       res.status(200).json({ status: true });
     } else {
-      res.status(200).json({ status: false  , message: 'Người dùng chưa tạo khoá, vui lòng nhập Mã xác thực'});
+      res.status(200).json({ status: false });
     }
     // Gửi phản hồi về cho client
   } catch (error) {

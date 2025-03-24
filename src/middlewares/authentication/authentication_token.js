@@ -15,8 +15,7 @@ export default async function Authentication(req, res, next) {
 
     //Login với token
     if (access_token) {
-      const isValidated = await Token.validate(access_token);
-
+      const isValidated = await Token.validate(access_token);      
       if (isValidated.valid) {
         req.body.accessToken = access_token;
         return next();
@@ -56,13 +55,13 @@ export default async function Authentication(req, res, next) {
       }
     }
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message });
+    res.status(400).json({ status: false, message: "Lỗi đăng nhập" });
   }
 }
 
 async function handleTokenGeneration(req, res, next, infoUser) {
   const randomKeyRefreshToken = generateRandomString();
-  const key_encode = encryptAES(randomKeyRefreshToken);
+  // const key_encode = encryptAES(randomKeyRefreshToken);
   const new_access_token = new Token(infoUser).generateAccessToken();
   const new_refresh_token = new Token(infoUser).generateRefreshToken(
     randomKeyRefreshToken
@@ -70,25 +69,26 @@ async function handleTokenGeneration(req, res, next, infoUser) {
 
   await new Token(infoUser).create(new_refresh_token, randomKeyRefreshToken);
 
-  const refreshTokenMaxAge =
-    parseInt(process.env.TIME_EXPIRED_REFRESH_TOKEN) * 24 * 60 * 60 * 1000;
+  // const refreshTokenMaxAge =
+  //   parseInt(process.env.TIME_EXPIRED_REFRESH_TOKEN) * 24 * 60 * 60 * 1000;
   const accessTokenMaxAge =
     parseInt(process.env.TIME_EXPIRED_ACCESS_TOKEN) * 60 * 1000;
 
-  res.cookie("key_refresh_token_encode", key_encode, {
-    maxAge: refreshTokenMaxAge,
-    httpOnly: false,
-    secure: true,
-    sameSite: "None",
-  });
+  // res.cookie("key_refresh_token_encode", key_encode, {
+  //   maxAge: refreshTokenMaxAge,
+  //   httpOnly: false,
+  //   secure: true,
+  //   sameSite: "None",
+  // });
+  // res.cookie("refreshToken", new_refresh_token, {
+  //   maxAge: refreshTokenMaxAge,
+  //   httpOnly: false,
+  //   secure: true,
+  //   sameSite: "None",
+  // });
+  
   res.cookie("accessToken", new_access_token, {
     maxAge: accessTokenMaxAge,
-    httpOnly: false,
-    secure: true,
-    sameSite: "None",
-  });
-  res.cookie("refreshToken", new_refresh_token, {
-    maxAge: refreshTokenMaxAge,
     httpOnly: false,
     secure: true,
     sameSite: "None",

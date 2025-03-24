@@ -61,7 +61,7 @@ export const blockFriend = async (req, res) => {
         if (result) {
           res.status(200).json({ status: true, data: result });
         } else {
-          res.status(404).json({ status: false });
+          res.status(200).json({ status: false });
         }
       } else {
         throw new Error("Người dùng không tồn tại");

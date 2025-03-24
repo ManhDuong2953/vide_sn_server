@@ -4,6 +4,7 @@ import { ProfileMedia } from "../../models/Users/profile_media.model.js";
 // Thêm thông báo mới
 const createNotice = async (req, res) => {
   const { sender_id, receiver_id, content, link_notice, created_at } = req.body;
+  if(sender_id === receiver_id) res.status(200);
   const newNotice = new Notice({
     sender_id,
     receiver_id,

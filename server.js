@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import { initializeSocket } from "./src/configs/socketIO/socketManager.js";
+import { listPost } from "./src/controllers/Post/post.controller.js";
 
 dotenv.config();
 const app = express();

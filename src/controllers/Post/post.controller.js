@@ -1,4 +1,4 @@
-import uploadFile from "../../configs/cloud/cloudinary.config.js";
+import uploadFile, { generateTemporaryUrl } from "../../configs/cloud/cloudinary.config.js";
 import db from "../../configs/database/database.config.js";
 import GroupChannel from "../../models/Group/group_channel.model.js";
 import GroupPost from "../../models/Group/group_post.model.js";

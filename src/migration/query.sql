@@ -249,6 +249,7 @@ CREATE TABLE
         product_price DECIMAL(9, 0) NOT NULL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         product_category VARCHAR(255) DEFAULT 'Uncategorized',
+        seller_wallet_address VARCHAR(1000) NOT NULL,
         product_location VARCHAR(1000) NOT NULL,
         product_longitude VARCHAR(1000) NOT NULL,
         product_latitude VARCHAR(1000) NOT NULL,
@@ -261,6 +262,14 @@ CREATE TABLE
         media_link VARCHAR(1000) NOT NULL,
         FOREIGN KEY (marketplace_product_id) REFERENCES Marketplace (marketplace_product_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
+
+CREATE TABLE
+    MarketplaceFile (
+        marketplace_product_id VARCHAR(255),
+        media_file_link VARCHAR(1000) NOT NULL,
+        FOREIGN KEY (marketplace_product_id) REFERENCES Marketplace (marketplace_product_id) ON DELETE CASCADE ON UPDATE CASCADE
+    );
+
 
 CREATE TABLE
     EmailOTP (

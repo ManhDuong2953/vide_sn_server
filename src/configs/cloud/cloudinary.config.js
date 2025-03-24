@@ -49,10 +49,39 @@ const uploadFile = async (file, folder) => {
 
     return {
       url: result.secure_url,
-      fileType: result.resource_type,
+      public_id: result.public_id,
+      resource_type: result.resource_type,
     };
   } catch (error) {
     console.error("Error uploading file:", error);
+    throw error;
+  }
+};
+
+export const generateTemporaryUrl = (
+  publicId,
+  expirySeconds = 3600,
+  resourceType = "image"
+) => {
+  return cloudinary.url(publicId, {
+    sign_url: true, // Kích hoạt chữ ký
+    resource_type: resourceType,
+    type: "authenticated",
+    expires_at: Math.floor(Date.now() / 1000) + expirySeconds, // Thời gian hết hạn
+  });
+};
+
+/**
+ * 3️⃣ Xóa file trên Cloudinary bằng publicId
+ */
+export const deleteFile = async (publicId, resourceType = "auto") => {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: resourceType,
+    });
+    return result;
+  } catch (error) {
+    console.error("Lỗi xóa file:", error);
     throw error;
   }
 };

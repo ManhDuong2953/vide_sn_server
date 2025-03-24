@@ -102,10 +102,13 @@ const loginUser = async (req, res) => {
 const getUserById = async (req, res) => {
     try {
         const user = await Users.getById(req.params.id);
+
+        console.log(user);
+        
         if (user) {
             res.status(200).json({ status: true, data: user });
         } else {
-            res.status(404).json({ status: false });
+            res.status(200).json({ status: false });
         }
     } catch (error) {
         console.log(error);

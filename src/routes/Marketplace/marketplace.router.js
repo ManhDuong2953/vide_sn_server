@@ -17,12 +17,15 @@ const upload = multer({ storage });
 export default function MarketplaceRouter() {
   router.post(
     "/create-product",
-    upload.array("files", 10),
+    upload.fields([
+      { name: "files", maxCount: 10 }, // Nhận tối đa 10 file cho 'files'
+      { name: "file_glb", maxCount: 1 } // Nhận 1 file cho 'fileGLB'
+    ]),
     Authentication,
     Authorization,
     createProduct
   );
-
+  
   router.get("/get-all-product", Authentication, Authorization, getAllProducts);
 
   router.get(

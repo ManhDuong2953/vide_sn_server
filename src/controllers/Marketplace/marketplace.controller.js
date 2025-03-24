@@ -3,11 +3,14 @@ import { MarketplaceMedia } from "../../models/Marketplace/marketplace_media.mod
 import uploadFile from "../../configs/cloud/cloudinary.config.js";
 import { Users } from "../../models/Users/user_account.model.js";
 import { ProfileMedia } from "../../models/Users/profile_media.model.js";
+import { MarketplaceFile } from "../../models/Marketplace/marketplace_file.model.js";
 // Thêm sản phẩm mới
 export async function createProduct(req, res) {
   try {
     const data = req.body;
-    const files = req.files;
+    const files = req.files?.files;
+    const file_glb = req.files?.file_glb;
+    
     // Tạo đối tượng Marketplace
     const product = new Marketplace({
       seller_id: data?.data?.user_id,
@@ -18,6 +21,7 @@ export async function createProduct(req, res) {
       product_location: data.product_location,
       product_longitude: data.product_longitude,
       product_latitude: data.product_latitude,
+      seller_wallet_address: data.seller_wallet_address,
     });
     const idProduct = await product.create();
     if (files.length > 0) {
@@ -29,6 +33,19 @@ export async function createProduct(req, res) {
         const media = new MarketplaceMedia({
           marketplace_product_id: idProduct,
           media_link: mediaUrl.url,
+        });
+        await media.create();
+      }
+    }
+    if (file_glb.length > 0) {
+      for (const file of file_glb) {
+        const mediaUrl = await uploadFile(
+          file,
+          process.env.NAME_FOLDER_MARKET_PLACE_FILE
+        );
+        const media = new MarketplaceFile({
+          marketplace_product_id: idProduct,
+          media_file_link: mediaUrl.url,
         });
         await media.create();
       }
@@ -147,6 +164,7 @@ export async function updateProduct(req, res) {
       product_description: data?.product_description,
       product_price: data?.product_price,
       product_category: data?.product_category,
+      seller_wallet_address: data?.seller_wallet_address,
     });
 
     const isUpdated = await product.update();
@@ -193,6 +211,10 @@ export async function deleteProduct(req, res) {
     const { id } = req.params;
     const user_id = req.body?.data?.user_id;
     const isDeleted = await Marketplace.delete(id, user_id);
+    if(isDeleted){
+      await MarketplaceMedia.deleteAllByProductId(id)
+      await MarketplaceFile.deleteAllByProductId(id)
+    }
 
     if (isDeleted) {
       return res

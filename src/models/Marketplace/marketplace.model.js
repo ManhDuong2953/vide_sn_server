@@ -13,6 +13,7 @@ class Marketplace {
     this.product_longitude = data.product_longitude;
     this.product_latitude = data.product_latitude;
     this.created_at = data.created_at || new Date();
+    this.seller_wallet_address = data.seller_wallet_address;
   }
 
   // Tạo sản phẩm mới
@@ -21,8 +22,8 @@ class Marketplace {
       const idGenerator = generateId("mrk_plc_");
       const createQuery = `
                 INSERT INTO Marketplace 
-                (marketplace_product_id, seller_id, product_name, product_description, product_price, product_category, product_location, product_longitude, product_latitude, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                (marketplace_product_id, seller_id, product_name, product_description, product_price, product_category, product_location, product_longitude, product_latitude, created_at,seller_wallet_address)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             `;
       const [result] = await db.execute(createQuery, [
         idGenerator,
@@ -35,6 +36,7 @@ class Marketplace {
         this.product_longitude,
         this.product_latitude,
         this.created_at,
+        this.seller_wallet_address
       ]);
       return result.affectedRows ? idGenerator : null;
     } catch (error) {
@@ -105,6 +107,11 @@ class Marketplace {
       if (this.product_latitude) {
         updateColumns.push("product_latitude = ?");
         updateValues.push(this.product_latitude);
+      }
+
+      if (this.seller_wallet_address) {
+        updateColumns.push("seller_wallet_address = ?");
+        updateValues.push(this.seller_wallet_address);
       }
 
       // Nếu có trường nào cần cập nhật, thực hiện UPDATE

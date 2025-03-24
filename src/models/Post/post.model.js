@@ -58,16 +58,7 @@ class Post {
       throw error;
     }
   }
-
   static async getAllPosts(my_id) {
-    const list_post_id_group = await GroupPost.getGroupPostByUserId(my_id);
-    const excludedPostIds = list_post_id_group?.map((item) => item.post_id);
-
-    // Xử lý chuỗi `post_id`
-    const excludedPostIdsString = excludedPostIds
-      .map((id) => `'${id}'`) // Bọc id trong dấu nháy đơn nếu cần
-      .join(",");
-
     const query = `
       SELECT 
           p.post_id, 
@@ -78,18 +69,16 @@ class Post {
           u.user_name, 
           up.media_link AS avatar,
           p.created_at 
-      FROM 
-          Post p
-      JOIN 
-          User u ON p.user_id = u.user_id
+      FROM Post p
+      -- Thông tin người đăng bài
+      JOIN User u ON p.user_id = u.user_id
+      -- Lấy avatar mới nhất
       LEFT JOIN (
           SELECT 
               user_id, 
               media_link
-          FROM 
-              ProfileMedia
-          WHERE 
-              media_type = 'avatar' 
+          FROM ProfileMedia
+          WHERE media_type = 'avatar' 
               AND (user_id, created_at) IN (
                   SELECT user_id, MAX(created_at) 
                   FROM ProfileMedia
@@ -98,22 +87,26 @@ class Post {
               )
       ) up ON u.user_id = up.user_id
       WHERE (
-          (
-              (p.user_id = ? AND p.post_privacy IN (0, 1)) 
-              OR (p.user_id != ? AND p.post_privacy = 1)
+          -- Bài viết của chính user
+          p.user_id = ?
+          -- Bài viết của bạn bè
+          OR EXISTS (
+              SELECT 1 FROM Friend f
+              WHERE (f.requestor_id = ? AND f.receiver_id = p.user_id AND f.relationship_status = 1) 
+                 OR (f.receiver_id = ? AND f.requestor_id = p.user_id AND f.relationship_status = 1)
           )
-          ${
-            excludedPostIds.length > 0
-              ? `AND p.post_id NOT IN (${excludedPostIdsString})`
-              : ""
-          }
+          -- Bài viết từ nhóm đã tham gia
+          OR EXISTS (
+              SELECT 1 FROM GroupPost gp
+              JOIN GroupMember gm ON gp.group_id = gm.group_id
+              WHERE gp.post_id = p.post_id AND gm.member_id = ?
+          )
       )
-      ORDER BY 
-          p.created_at DESC;
+      ORDER BY p.created_at DESC;
     `;
 
     try {
-      const [results] = await db.execute(query, [my_id, my_id]);
+      const [results] = await db.execute(query, [my_id, my_id, my_id, my_id]);
       return results;
     } catch (error) {
       console.error("Error fetching posts:", error);
