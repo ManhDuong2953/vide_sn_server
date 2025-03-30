@@ -30,7 +30,7 @@ class Users {
         user_id,
         this.user_name,
         cleanString(
-          this.user_name.toLowerCase() + "_" + generateRandomString(4)
+          this.user_name?.toLowerCase() + "_" + generateRandomString(4)
         ),
         this.user_email,
         await hashString(this.user_password),

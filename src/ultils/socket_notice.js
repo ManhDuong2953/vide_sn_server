@@ -11,8 +11,6 @@ export const sendNoticeToFriends = async (
   link_notice = null
 ) => {
   try {
-    console.log(sender_id, friend_ids);
-
     // Lặp qua danh sách bạn bè và gửi socket nếu họ trực tuyến
     for (const friend_id of friend_ids) {
       if (friend_id === sender_id) continue;
@@ -24,7 +22,7 @@ export const sendNoticeToFriends = async (
       // Tạo thông báo mới để lưu vào DB
       const newNotice = new Notice({
         sender_id,
-        receiver_id: friend_id?.user_id,
+        receiver_id: friend_id?.user_id ?? friend_id,
         content: contentMessage,
         link_notice,
       });

@@ -8,7 +8,7 @@
       this.content_text_encrypt = data.content_text_encrypt;
       this.content_text_encrypt_by_owner = data.content_text_encrypt_by_owner;
       this.content_type = data.content_type;
-      this.reply_messenger_id = data.reply_messenger_id;
+      this.reply_messenger_id = data.reply_messenger_id || null;
       this.sender_id = data.sender_id;
       this.receiver_id = data.receiver_id;
       this.name_file = data.name_file || null;

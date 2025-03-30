@@ -9,7 +9,7 @@ const initializeSocket = (httpServer, users) => {
     // Kiểm tra xem io đã được khởi tạo chưa
     io = new Server(httpServer, {
       cors: {
-        origin: process.env.HOST || "http://localhost:3006",
+        origin: process.env.HOST || "http://localhost:3000",
         methods: ["GET", "POST"],
         allowedHeaders: ["Content-Type"],
         credentials: true,

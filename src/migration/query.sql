@@ -246,7 +246,7 @@ CREATE TABLE
         seller_id VARCHAR(255) NOT NULL,
         product_name VARCHAR(255) NOT NULL,
         product_description VARCHAR(1000) NOT NULL,
-        product_price DECIMAL(9, 0) NOT NULL DEFAULT 0,
+        product_price DECIMAL(9, 6) NOT NULL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         product_category VARCHAR(255) DEFAULT 'Uncategorized',
         seller_wallet_address VARCHAR(1000) NOT NULL,
@@ -270,6 +270,33 @@ CREATE TABLE
         FOREIGN KEY (marketplace_product_id) REFERENCES Marketplace (marketplace_product_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
+CREATE TABLE
+    TransactionDetail (
+        transaction_id VARCHAR(255) PRIMARY KEY,
+        transaction_hash VARCHAR(66) UNIQUE NOT NULL,
+        buyer_id VARCHAR(255) NOT NULL,
+        seller_id VARCHAR(255) NOT NULL,
+        buyer_address VARCHAR(42) NOT NULL,
+        seller_address VARCHAR(42) NOT NULL,
+        amount DECIMAL(18, 8) NOT NULL,
+        product_id VARCHAR(255) NOT NULL,
+        status BOOLEAN DEFAULT TRUE, -- Mặc định là TRUE khi mua thành công
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (buyer_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (seller_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES Marketplace (marketplace_product_id) ON DELETE CASCADE ON UPDATE CASCADE
+    );
+
+CREATE TABLE
+    UserGLBFiles (
+        id VARCHAR(255) PRIMARY KEY,
+        user_id VARCHAR(255) NOT NULL,
+        transaction_id VARCHAR(255) NOT NULL,
+        glb_file_link VARCHAR(1000) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (transaction_id) REFERENCES TransactionDetail (transaction_id) ON DELETE CASCADE ON UPDATE CASCADE
+    );
 
 CREATE TABLE
     EmailOTP (

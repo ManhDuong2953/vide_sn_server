@@ -32,7 +32,7 @@ class MarketplaceFile {
                 WHERE marketplace_product_id = ?;
             `;
       const [result] = await db.execute(selectQuery, [productId]);
-      return result;
+      return result?.[0];
     } catch (error) {
       console.error("Error fetching media:", error);
       return [];

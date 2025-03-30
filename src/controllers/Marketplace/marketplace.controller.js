@@ -4,6 +4,7 @@ import uploadFile from "../../configs/cloud/cloudinary.config.js";
 import { Users } from "../../models/Users/user_account.model.js";
 import { ProfileMedia } from "../../models/Users/profile_media.model.js";
 import { MarketplaceFile } from "../../models/Marketplace/marketplace_file.model.js";
+import { UserGLBFile } from "../../models/Marketplace/transaction_detail.model.js";
 // Thêm sản phẩm mới
 export async function createProduct(req, res) {
   try {
@@ -256,3 +257,64 @@ export async function searchProducts(req, res) {
   }
 }
 
+// Tạo giao dịch mới
+export async function createTransaction(req, res) {
+  try {
+    const transactionData = req.body;
+    const transaction = new TransactionDetail(transactionData);
+    const isCreated = await transaction.create();
+    if (isCreated) {
+      return res.status(201).json({ status: true, message: "Giao dịch thành công!" });
+    } else {
+      return res.status(400).json({ status: false, message: "Giao dịch thất bại!" });
+    }
+  } catch (error) {
+    console.error("Error creating transaction:", error);
+    return res.status(500).json({ message: "Lỗi server khi tạo giao dịch." });
+  }
+}
+
+// Lấy thông tin giao dịch theo transaction_id
+export async function getTransactionById(req, res) {
+  try {
+    const { transaction_id } = req.params;
+    const transaction = await TransactionDetail.getByTransactionId(transaction_id);
+    if (transaction) {
+      return res.status(200).json({ status: true, data: transaction });
+    } else {
+      return res.status(404).json({ status: false, message: "Không tìm thấy giao dịch." });
+    }
+  } catch (error) {
+    console.error("Error fetching transaction:", error);
+    return res.status(500).json({ message: "Lỗi server khi lấy giao dịch." });
+  }
+}
+
+// Tạo file GLB mới
+export async function createUserGLBFile(req, res) {
+  try {
+    const fileData = req.body;
+    const glbFile = new UserGLBFile(fileData);
+    const isCreated = await glbFile.create();
+    if (isCreated) {
+      return res.status(201).json({ status: true, message: "Tải file GLB thành công!" });
+    } else {
+      return res.status(400).json({ status: false, message: "Tải file GLB thất bại!" });
+    }
+  } catch (error) {
+    console.error("Error creating GLB file:", error);
+    return res.status(500).json({ message: "Lỗi server khi tạo file GLB." });
+  }
+}
+
+// Lấy danh sách file GLB theo user_id
+export async function getUserGLBFiles(req, res) {
+  try {
+    const { user_id } = req.params;
+    const files = await UserGLBFile.getByUserId(user_id);
+    return res.status(200).json({ status: true, data: files });
+  } catch (error) {
+    console.error("Error fetching GLB files:", error);
+    return res.status(500).json({ message: "Lỗi server khi lấy danh sách file GLB." });
+  }
+}
