@@ -7,6 +7,7 @@ import {
   deleteProduct,
   getAllProducts,
   getProductById,
+  getUserGLBFilesByID,
   searchProducts,
   updateProduct,
 } from "../../controllers/Marketplace/marketplace.controller.js";
@@ -27,6 +28,7 @@ export default function MarketplaceRouter() {
   );
   
   router.get("/get-all-product", Authentication, Authorization, getAllProducts);
+  router.get("/get-view-three-dimension/:id", Authentication, Authorization, getUserGLBFilesByID);
 
   router.get(
     "/get-product-by-id/:id",

@@ -11,7 +11,7 @@ export async function createProduct(req, res) {
     const data = req.body;
     const files = req.files?.files;
     const file_glb = req.files?.file_glb;
-    
+
     // Tạo đối tượng Marketplace
     const product = new Marketplace({
       seller_id: data?.data?.user_id,
@@ -212,9 +212,9 @@ export async function deleteProduct(req, res) {
     const { id } = req.params;
     const user_id = req.body?.data?.user_id;
     const isDeleted = await Marketplace.delete(id, user_id);
-    if(isDeleted){
-      await MarketplaceMedia.deleteAllByProductId(id)
-      await MarketplaceFile.deleteAllByProductId(id)
+    if (isDeleted) {
+      await MarketplaceMedia.deleteAllByProductId(id);
+      await MarketplaceFile.deleteAllByProductId(id);
     }
 
     if (isDeleted) {
@@ -236,7 +236,8 @@ export async function deleteProduct(req, res) {
 // Lấy tất cả sản phẩm
 export async function searchProducts(req, res) {
   try {
-    const { query, minPrice, maxPrice, category, location, currentPage } = req.body;
+    const { query, minPrice, maxPrice, category, location, currentPage } =
+      req.body;
 
     const products = await Marketplace.search({
       query,
@@ -244,16 +245,20 @@ export async function searchProducts(req, res) {
       maxPrice,
       category,
       location,
-      currentPage
+      currentPage,
     });
 
     for (const item of products) {
-      item.media = await MarketplaceMedia.getAllByProductId(item.marketplace_product_id);
+      item.media = await MarketplaceMedia.getAllByProductId(
+        item.marketplace_product_id
+      );
     }
     return res.status(200).json({ status: true, data: products });
   } catch (error) {
     console.error("Error fetching products:", error);
-    return res.status(500).json({ message: "Lỗi server khi lấy danh sách sản phẩm." });
+    return res
+      .status(500)
+      .json({ message: "Lỗi server khi lấy danh sách sản phẩm." });
   }
 }
 
@@ -264,9 +269,13 @@ export async function createTransaction(req, res) {
     const transaction = new TransactionDetail(transactionData);
     const isCreated = await transaction.create();
     if (isCreated) {
-      return res.status(201).json({ status: true, message: "Giao dịch thành công!" });
+      return res
+        .status(201)
+        .json({ status: true, message: "Giao dịch thành công!" });
     } else {
-      return res.status(400).json({ status: false, message: "Giao dịch thất bại!" });
+      return res
+        .status(400)
+        .json({ status: false, message: "Giao dịch thất bại!" });
     }
   } catch (error) {
     console.error("Error creating transaction:", error);
@@ -278,11 +287,15 @@ export async function createTransaction(req, res) {
 export async function getTransactionById(req, res) {
   try {
     const { transaction_id } = req.params;
-    const transaction = await TransactionDetail.getByTransactionId(transaction_id);
+    const transaction = await TransactionDetail.getByTransactionId(
+      transaction_id
+    );
     if (transaction) {
       return res.status(200).json({ status: true, data: transaction });
     } else {
-      return res.status(404).json({ status: false, message: "Không tìm thấy giao dịch." });
+      return res
+        .status(404)
+        .json({ status: false, message: "Không tìm thấy giao dịch." });
     }
   } catch (error) {
     console.error("Error fetching transaction:", error);
@@ -297,9 +310,13 @@ export async function createUserGLBFile(req, res) {
     const glbFile = new UserGLBFile(fileData);
     const isCreated = await glbFile.create();
     if (isCreated) {
-      return res.status(201).json({ status: true, message: "Tải file GLB thành công!" });
+      return res
+        .status(201)
+        .json({ status: true, message: "Tải file GLB thành công!" });
     } else {
-      return res.status(400).json({ status: false, message: "Tải file GLB thất bại!" });
+      return res
+        .status(400)
+        .json({ status: false, message: "Tải file GLB thất bại!" });
     }
   } catch (error) {
     console.error("Error creating GLB file:", error);
@@ -308,13 +325,34 @@ export async function createUserGLBFile(req, res) {
 }
 
 // Lấy danh sách file GLB theo user_id
-export async function getUserGLBFiles(req, res) {
+export async function getUserGLBFilesByUserID(req, res) {
   try {
-    const { user_id } = req.params;
+    const { user_id } = req.body?.data;
     const files = await UserGLBFile.getByUserId(user_id);
     return res.status(200).json({ status: true, data: files });
   } catch (error) {
     console.error("Error fetching GLB files:", error);
-    return res.status(500).json({ message: "Lỗi server khi lấy danh sách file GLB." });
+    return res
+      .status(500)
+      .json({ message: "Lỗi server khi lấy danh sách file GLB." });
+  }
+}
+
+// Lấy danh sách file GLB theo id
+export async function getUserGLBFilesByID(req, res) {
+  try {
+    const { id } = req.params;
+    const { user_id } = req.body?.data;
+    const files = await UserGLBFile.getById(id);    
+    if (user_id === files?.user_id) {
+      return res.status(200).json({ status: true, data: files });
+    } else {
+      return res.status(404).json({ status: false });
+    }
+  } catch (error) {
+    console.error("Error fetching GLB files:", error);
+    return res
+      .status(500)
+      .json({ message: "Lỗi server khi lấy danh sách file GLB." });
   }
 }

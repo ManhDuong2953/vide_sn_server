@@ -88,6 +88,17 @@ class UserGLBFile {
       return [];
     }
   }
+
+  static async getById(id) {
+    try {
+      const selectQuery = `SELECT * FROM UserGLBFiles WHERE id = ?;`;
+      const [result] = await db.execute(selectQuery, [id]);
+      return result?.[0];
+    } catch (error) {
+      console.error("Error fetching GLB files:", error);
+      return [];
+    }
+  }
 }
 
 export { TransactionDetail, UserGLBFile };

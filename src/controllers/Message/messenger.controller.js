@@ -2,7 +2,7 @@ import { io, users } from "../../../server.js";
 import uploadFile from "../../configs/cloud/cloudinary.config.js";
 import { getSocketIdByUserId } from "../../configs/socketIO/socketManager.js";
 import Message from "../../models/Message/messenger.model.js";
-import { decryptWithPrivateKey } from "../../ultils/crypto.js";
+import { hybridDecrypt } from "../../ultils/crypto.js";
 import dotenv from "dotenv";
 dotenv.config();
 const createMessage = async (req, res) => {
@@ -89,12 +89,12 @@ const getAllMessages = async (req, res) => {
         let content_text = "Tin nhắn đã được mã hoá";
  
         if (item.sender_id === user_id) {
-          content_text = decryptWithPrivateKey(
+          content_text = hybridDecrypt(
             item.content_text_encrypt_by_owner,
             private_key
           );
         } else if (item.sender_id === friend_id) {
-          content_text = decryptWithPrivateKey(
+          content_text = hybridDecrypt(
             item.content_text_encrypt,
             private_key
           );
@@ -142,12 +142,12 @@ const getAllConversations = async (req, res) => {
 
         // Giải mã tin nhắn cuối cùng của bạn bè
         if (conv.sender_id === user_id) {
-          content_text = decryptWithPrivateKey(
+          content_text = hybridDecrypt(
             conv.content_text_encrypt_by_owner,
             private_key
           );
         } else {
-          content_text = decryptWithPrivateKey(
+          content_text = hybridDecrypt(
             conv.content_text_encrypt,
             private_key
           );

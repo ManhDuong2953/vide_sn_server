@@ -193,6 +193,7 @@ app.post(
       const newMessage = new Message({
         sender_id: cskh_id,
         receiver_id: user_id,
+        content_type: 'text'
       });
 
       // Attempt to create the message in the database
